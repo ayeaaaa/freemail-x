@@ -82,6 +82,57 @@ export function generateRandomId(length = 8) {
 }
 
 /**
+ * 规范化域名
+ * @param {string} domain
+ * @returns {string}
+ */
+export function normalizeDomain(domain) {
+  return String(domain || '').trim().toLowerCase().replace(/^\.+|\.+$/g, '');
+}
+
+/**
+ * 规范化域名列表
+ * @param {string|string[]|undefined|null} domains
+ * @returns {string[]}
+ */
+export function normalizeDomainList(domains) {
+  if (Array.isArray(domains)) {
+    return domains.map(normalizeDomain).filter(Boolean);
+  }
+  return String(domains || '')
+    .split(/[\s,]+/)
+    .map(normalizeDomain)
+    .filter(Boolean);
+}
+
+/**
+ * 查找匹配到的根域名
+ * @param {string} domain
+ * @param {string|string[]} rootDomains
+ * @returns {string}
+ */
+export function findMatchedRootDomain(domain, rootDomains) {
+  const cur = normalizeDomain(domain);
+  const list = normalizeDomainList(rootDomains).sort((a, b) => b.length - a.length);
+  for (const root of list) {
+    if (cur === root || cur.endsWith(`.${root}`)) {
+      return root;
+    }
+  }
+  return '';
+}
+
+/**
+ * 判断是否允许该域名（根域或其任意子域）
+ * @param {string} domain
+ * @param {string|string[]} rootDomains
+ * @returns {boolean}
+ */
+export function isAllowedDomain(domain, rootDomains) {
+  return !!findMatchedRootDomain(domain, rootDomains);
+}
+
+/**
  * 验证邮箱地址格式
  * @param {string} email - 邮箱地址
  * @returns {boolean} 是否为有效的邮箱格式

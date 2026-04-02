@@ -3,6 +3,8 @@
  * @module email/sender
  */
 
+import { normalizeDomain, findMatchedRootDomain } from '../utils/common.js';
+
 /**
  * 解析 RESEND_TOKEN 配置，支持多域名API密钥映射
  * @param {string} resendToken - RESEND_TOKEN 配置字符串
@@ -25,7 +27,7 @@ function parseResendConfig(resendToken) {
   for (const pair of pairs) {
     const [domain, apiKey] = pair.split('=').map(s => s.trim());
     if (domain && apiKey) {
-      config[domain.toLowerCase()] = apiKey;
+      config[normalizeDomain(domain)] = apiKey;
     }
   }
 
@@ -52,8 +54,9 @@ export function selectApiKeyForDomain(fromEmail, resendConfig) {
   const emailMatch = String(fromEmail).match(/@([^>]+)/);
   if (!emailMatch) return '';
 
-  const domain = emailMatch[1].toLowerCase().trim();
-  return config[domain] || '';
+  const domain = normalizeDomain(emailMatch[1]);
+  const matchedDomain = findMatchedRootDomain(domain, Object.keys(config));
+  return config[domain] || (matchedDomain ? config[matchedDomain] : '') || '';
 }
 
 /**

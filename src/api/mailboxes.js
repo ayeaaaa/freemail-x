@@ -5,7 +5,7 @@
 
 import { getJwtPayload, isStrictAdmin, errorResponse } from './helpers.js';
 import { buildMockMailboxes, MOCK_DOMAINS } from './mock.js';
-import { extractEmail, generateRandomId } from '../utils/common.js';
+import { extractEmail, generateRandomId, normalizeDomain, isAllowedDomain } from '../utils/common.js';
 import { getCachedUserQuota, getCachedSystemStat } from '../utils/cache.js';
 import {
   getOrCreateMailboxId,
@@ -28,10 +28,15 @@ import { handleMailboxAdminApi } from './mailboxAdmin.js';
 export async function handleMailboxesApi(request, db, mailDomains, url, path, options) {
   const isMock = !!options.mockOnly;
 
+  const domains = isMock
+    ? MOCK_DOMAINS
+    : (Array.isArray(mailDomains) ? mailDomains : [(mailDomains || 'temp.example.com')])
+      .map(normalizeDomain)
+      .filter(Boolean);
+
   // 返回域名列表给前端
   if (path === '/api/domains' && request.method === 'GET') {
     if (isMock) return Response.json(MOCK_DOMAINS);
-    const domains = Array.isArray(mailDomains) ? mailDomains : [(mailDomains || 'temp.example.com')];
     return Response.json(domains);
   }
 
@@ -39,9 +44,11 @@ export async function handleMailboxesApi(request, db, mailDomains, url, path, op
   if (path === '/api/generate') {
     const lengthParam = Number(url.searchParams.get('length') || 0);
     const randomId = generateRandomId(lengthParam || undefined);
-    const domains = isMock ? MOCK_DOMAINS : (Array.isArray(mailDomains) ? mailDomains : [(mailDomains || 'temp.example.com')]);
+    const requestedDomain = normalizeDomain(url.searchParams.get('domain') || '');
     const domainIdx = Math.max(0, Math.min(domains.length - 1, Number(url.searchParams.get('domainIndex') || 0)));
-    const chosenDomain = domains[domainIdx] || domains[0];
+    const chosenDomain = requestedDomain && isAllowedDomain(requestedDomain, domains)
+      ? requestedDomain
+      : (domains[domainIdx] || domains[0]);
     const email = `${randomId}@${chosenDomain}`;
     
     if (!isMock) {
@@ -65,12 +72,27 @@ export async function handleMailboxesApi(request, db, mailDomains, url, path, op
     if (isMock) {
       try {
         const body = await request.json();
-        const local = String(body.local || '').trim().toLowerCase();
+        const fullEmail = String(body.email || '').trim().toLowerCase();
+        let local = String(body.local || '').trim().toLowerCase();
+        let requestedDomain = normalizeDomain(body.domain || '');
+        if (fullEmail) {
+          const at = fullEmail.indexOf('@');
+          if (at <= 0 || at >= fullEmail.length - 1) {
+            return errorResponse('非法邮箱地址', 400);
+          }
+          local = fullEmail.slice(0, at);
+          requestedDomain = normalizeDomain(fullEmail.slice(at + 1));
+        }
         const valid = /^[a-z0-9._-]{1,64}$/i.test(local);
         if (!valid) return errorResponse('非法用户名', 400);
-        const domains = MOCK_DOMAINS;
-        const domainIdx = Math.max(0, Math.min(domains.length - 1, Number(body.domainIndex || 0)));
-        const chosenDomain = domains[domainIdx] || domains[0];
+        const mockDomains = MOCK_DOMAINS.map(normalizeDomain).filter(Boolean);
+        const domainIdx = Math.max(0, Math.min(mockDomains.length - 1, Number(body.domainIndex || 0)));
+        const chosenDomain = requestedDomain && isAllowedDomain(requestedDomain, mockDomains)
+          ? requestedDomain
+          : (mockDomains[domainIdx] || mockDomains[0]);
+        if (requestedDomain && !isAllowedDomain(requestedDomain, mockDomains)) {
+          return errorResponse('域名不在允许范围内', 400);
+        }
         const email = `${local}@${chosenDomain}`;
         return Response.json({ email, expires: Date.now() + 3600000 });
       } catch (_) { return errorResponse('Bad Request', 400); }
@@ -78,12 +100,29 @@ export async function handleMailboxesApi(request, db, mailDomains, url, path, op
     
     try {
       const body = await request.json();
-      const local = String(body.local || '').trim().toLowerCase();
+      const fullEmail = String(body.email || '').trim().toLowerCase();
+      let local = String(body.local || '').trim().toLowerCase();
+      let requestedDomain = normalizeDomain(body.domain || '');
+
+      if (fullEmail) {
+        const at = fullEmail.indexOf('@');
+        if (at <= 0 || at >= fullEmail.length - 1) {
+          return errorResponse('非法邮箱地址', 400);
+        }
+        local = fullEmail.slice(0, at);
+        requestedDomain = normalizeDomain(fullEmail.slice(at + 1));
+      }
+
       const valid = /^[a-z0-9._-]{1,64}$/i.test(local);
       if (!valid) return errorResponse('非法用户名', 400);
-      const domains = Array.isArray(mailDomains) ? mailDomains : [(mailDomains || 'temp.example.com')];
       const domainIdx = Math.max(0, Math.min(domains.length - 1, Number(body.domainIndex || 0)));
-      const chosenDomain = domains[domainIdx] || domains[0];
+      const chosenDomain = requestedDomain && isAllowedDomain(requestedDomain, domains)
+        ? requestedDomain
+        : (domains[domainIdx] || domains[0]);
+      if (!chosenDomain) return errorResponse('未配置可用域名', 400);
+      if (requestedDomain && !isAllowedDomain(requestedDomain, domains)) {
+        return errorResponse('域名不在允许范围内', 400);
+      }
       const email = `${local}@${chosenDomain}`;
       
       try {

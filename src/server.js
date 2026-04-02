@@ -13,7 +13,7 @@
 import { initDatabase, getInitializedDatabase } from './db/index.js';
 import { createRouter, authMiddleware } from './routes/index.js';
 import { createAssetManager } from './assets/index.js';
-import { extractEmail, normalizeEmailAlias } from './utils/common.js';
+import { extractEmail, normalizeEmailAlias, normalizeDomainList } from './utils/common.js';
 import { forwardByLocalPart, forwardByMailboxConfig } from './email/forwarder.js';
 import { parseEmailBody, extractVerificationCode } from './email/parser.js';
 import { getForwardTarget } from './db/mailboxes.js';
@@ -37,10 +37,7 @@ export default {
     }
 
     // 解析邮件域名
-    const MAIL_DOMAINS = (env.MAIL_DOMAIN || 'temp.example.com')
-      .split(/[,\s]+/)
-      .map(d => d.trim())
-      .filter(Boolean);
+    const MAIL_DOMAINS = normalizeDomainList(env.MAIL_DOMAIN || 'temp.example.com');
 
     // 创建路由器并添加认证中间件
     const router = createRouter();
