@@ -21,7 +21,7 @@ import { parseEmailBody } from '../email/parser.js';
 export async function handleEmailsApi(request, db, url, path, options) {
   const isMock = !!options.mockOnly;
   const isMailboxOnly = !!options.mailboxOnly;
-  const r2 = options.r2;
+  const r2 = null;
 
   // 获取邮件列表
   if (path === '/api/emails' && request.method === 'GET') {
@@ -160,23 +160,9 @@ export async function handleEmailsApi(request, db, url, path, options) {
     }
   }
 
-  // 下载 EML（从 R2 获取）- 必须在通用邮件详情处理器之前
+  // 下载 EML（无 R2 模式下不可用）
   if (request.method === 'GET' && path.startsWith('/api/email/') && path.endsWith('/download')) {
-    if (options.mockOnly) return errorResponse('演示模式不可下载', 403);
-    const id = path.split('/')[3];
-    const { results } = await db.prepare('SELECT r2_bucket, r2_object_key FROM messages WHERE id = ?').bind(id).all();
-    const row = (results || [])[0];
-    if (!row || !row.r2_object_key) return errorResponse('未找到对象', 404);
-    try {
-      if (!r2) return errorResponse('R2 未绑定', 500);
-      const obj = await r2.get(row.r2_object_key);
-      if (!obj) return errorResponse('对象不存在', 404);
-      const headers = new Headers({ 'Content-Type': 'message/rfc822' });
-      headers.set('Content-Disposition', `attachment; filename="${String(row.r2_object_key).split('/').pop()}"`);
-      return new Response(obj.body, { headers });
-    } catch (e) {
-      return errorResponse('下载失败', 500);
-    }
+    return errorResponse('未保留原始 EML', 410);
   }
 
   // 获取单封邮件详情
@@ -208,32 +194,14 @@ export async function handleEmailsApi(request, db, url, path, options) {
       const row = results[0];
       let content = '';
       let html_content = '';
-      
       try {
-        if (row.r2_object_key && r2) {
-          const obj = await r2.get(row.r2_object_key);
-          if (obj) {
-            let raw = '';
-            if (typeof obj.text === 'function') raw = await obj.text();
-            else if (typeof obj.arrayBuffer === 'function') raw = await new Response(await obj.arrayBuffer()).text();
-            else raw = await new Response(obj.body).text();
-            const parsed = parseEmailBody(raw || '');
-            content = parsed.text || '';
-            html_content = parsed.html || '';
-          }
-        }
+        const fallback = await db.prepare('SELECT content, html_content FROM messages WHERE id = ?').bind(emailId).all();
+        const fr = (fallback?.results || [])[0] || {};
+        content = fr.content || '';
+        html_content = fr.html_content || '';
       } catch (_) { }
 
-      if ((!content && !html_content)) {
-        try {
-          const fallback = await db.prepare('SELECT content, html_content FROM messages WHERE id = ?').bind(emailId).all();
-          const fr = (fallback?.results || [])[0] || {};
-          content = content || fr.content || '';
-          html_content = html_content || fr.html_content || '';
-        } catch (_) { }
-      }
-
-      return Response.json({ ...row, content, html_content, download: row.r2_object_key ? `/api/email/${emailId}/download` : '' });
+      return Response.json({ ...row, content, html_content, download: '' });
     } catch (e) {
       const { results } = await db.prepare(`
         SELECT id, sender, to_addrs, subject, content, html_content, received_at, is_read
@@ -255,19 +223,8 @@ export async function handleEmailsApi(request, db, url, path, options) {
     }
 
     try {
-      // 先查 r2_object_key，删除前取出以便同步清理 R2
-      const row = await db.prepare(`SELECT r2_object_key FROM messages WHERE id = ?`).bind(emailId).first();
       const result = await db.prepare(`DELETE FROM messages WHERE id = ?`).bind(emailId).run();
       const deleted = (result?.meta?.changes || 0) > 0;
-
-      // 同步删除 R2 对象
-      if (deleted && r2 && row?.r2_object_key) {
-        try {
-          await r2.delete(row.r2_object_key);
-        } catch (r2Err) {
-          console.error('删除 R2 对象失败:', r2Err);
-        }
-      }
 
       return Response.json({
         success: true,

@@ -45,10 +45,8 @@ export async function handleMailboxAdminApi(request, db, url, path, options) {
         if (!own?.results?.length) return errorResponse('Forbidden', 403);
       }
 
-      try { await db.exec('BEGIN'); } catch (_) { }
       await db.prepare('DELETE FROM messages WHERE mailbox_id = ?').bind(mailboxId).run();
       const deleteResult = await db.prepare('DELETE FROM mailboxes WHERE id = ?').bind(mailboxId).run();
-      try { await db.exec('COMMIT'); } catch (_) { }
 
       const deleted = (deleteResult?.meta?.changes || 0) > 0;
 
@@ -59,7 +57,6 @@ export async function handleMailboxAdminApi(request, db, url, path, options) {
 
       return Response.json({ success: deleted, deleted });
     } catch (e) {
-      try { await db.exec('ROLLBACK'); } catch (_) { }
       return errorResponse('删除失败', 500);
     }
   }
@@ -250,7 +247,7 @@ export async function handleMailboxAdminApi(request, db, url, path, options) {
       role: payload.role === 'admin' && isStrictAdmin(request, options) ? 'strictAdmin' : payload.role,
       mailboxId: payload.mailboxId
     } : null;
-    return await handleSetForward(request, { TEMP_MAIL_DB: db });
+    return await handleSetForward(request, { DB: db, TEMP_MAIL_DB: db });
   }
 
   if (path === '/api/mailbox/favorite' && request.method === 'POST') {
@@ -261,35 +258,35 @@ export async function handleMailboxAdminApi(request, db, url, path, options) {
       role: payload.role === 'admin' && isStrictAdmin(request, options) ? 'strictAdmin' : payload.role,
       mailboxId: payload.mailboxId
     } : null;
-    return await handleToggleFavorite(request, { TEMP_MAIL_DB: db });
+    return await handleToggleFavorite(request, { DB: db, TEMP_MAIL_DB: db });
   }
 
   if (path === '/api/mailboxes/batch-favorite' && request.method === 'POST') {
     if (isMock) return errorResponse('演示模式不可操作', 403);
     if (!isStrictAdmin(request, options)) return errorResponse('Forbidden', 403);
     request.user = { role: 'strictAdmin' };
-    return await handleBatchFavorite(request, { TEMP_MAIL_DB: db });
+    return await handleBatchFavorite(request, { DB: db, TEMP_MAIL_DB: db });
   }
 
   if (path === '/api/mailboxes/batch-forward' && request.method === 'POST') {
     if (isMock) return errorResponse('演示模式不可操作', 403);
     if (!isStrictAdmin(request, options)) return errorResponse('Forbidden', 403);
     request.user = { role: 'strictAdmin' };
-    return await handleBatchForward(request, { TEMP_MAIL_DB: db });
+    return await handleBatchForward(request, { DB: db, TEMP_MAIL_DB: db });
   }
 
   if (path === '/api/mailboxes/batch-favorite-by-address' && request.method === 'POST') {
     if (isMock) return errorResponse('演示模式不可操作', 403);
     if (!isStrictAdmin(request, options)) return errorResponse('Forbidden', 403);
     request.user = { role: 'strictAdmin' };
-    return await handleBatchFavoriteByAddress(request, { TEMP_MAIL_DB: db });
+    return await handleBatchFavoriteByAddress(request, { DB: db, TEMP_MAIL_DB: db });
   }
 
   if (path === '/api/mailboxes/batch-forward-by-address' && request.method === 'POST') {
     if (isMock) return errorResponse('演示模式不可操作', 403);
     if (!isStrictAdmin(request, options)) return errorResponse('Forbidden', 403);
     request.user = { role: 'strictAdmin' };
-    return await handleBatchForwardByAddress(request, { TEMP_MAIL_DB: db });
+    return await handleBatchForwardByAddress(request, { DB: db, TEMP_MAIL_DB: db });
   }
 
   // 邮箱密码修改（邮箱用户自己修改）

@@ -4,6 +4,7 @@
  */
 
 import { initDatabase } from './init.js';
+import { createHttpCompatDb } from './httpdb.js';
 
 /**
  * 获取数据库连接并验证有效性
@@ -12,7 +13,9 @@ import { initDatabase } from './init.js';
  * @throws {Error} 当数据库未配置或连接失败时抛出异常
  */
 export async function getDatabaseWithValidation(env) {
-  const db = env.TEMP_MAIL_DB;
+  const db = env.DB_API_URL && env.DB_API_TOKEN
+    ? createHttpCompatDb(env)
+    : env.TEMP_MAIL_DB;
   
   if (!db) {
     throw new Error('数据库未配置，请检查 wrangler.toml 中的 [[d1_databases]] 绑定');
@@ -22,6 +25,7 @@ export async function getDatabaseWithValidation(env) {
   try {
     await db.prepare('SELECT 1').all();
   } catch (error) {
+    console.error('[db.connection] validation failed', error);
     throw new Error(`数据库连接失败: ${error.message}`);
   }
   

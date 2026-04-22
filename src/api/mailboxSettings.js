@@ -4,6 +4,7 @@
  */
 
 import { isValidEmail } from '../utils/common.js';
+import { invalidateMailboxCache, invalidateSystemStatCache } from '../utils/cache.js';
 
 /**
  * 检查用户是否有权限操作指定邮箱
@@ -63,7 +64,7 @@ export async function handleSetForward(req, env) {
       return new Response(JSON.stringify({ error: '转发目标邮箱格式无效' }), { status: 400 });
     }
     
-    const db = env.TEMP_MAIL_DB;
+    const db = env.DB || env.TEMP_MAIL_DB;
     
     // 检查邮箱是否存在
     const mailbox = await db.prepare('SELECT id, address FROM mailboxes WHERE id = ? LIMIT 1')
@@ -81,6 +82,8 @@ export async function handleSetForward(req, env) {
     // 更新转发设置
     await db.prepare('UPDATE mailboxes SET forward_to = ? WHERE id = ?')
       .bind(forwardTarget, mailbox_id).run();
+    invalidateMailboxCache(mailbox.address);
+    invalidateSystemStatCache('total_mailboxes');
     
     return new Response(JSON.stringify({
       success: true,
@@ -116,7 +119,7 @@ export async function handleToggleFavorite(req, env) {
       return new Response(JSON.stringify({ error: '缺少有效的邮箱 ID' }), { status: 400 });
     }
     
-    const db = env.TEMP_MAIL_DB;
+    const db = env.DB || env.TEMP_MAIL_DB;
     
     // 检查邮箱是否存在
     const mailbox = await db.prepare('SELECT id, is_favorite FROM mailboxes WHERE id = ? LIMIT 1')
@@ -135,6 +138,7 @@ export async function handleToggleFavorite(req, env) {
     const newFavorite = mailbox.is_favorite ? 0 : 1;
     await db.prepare('UPDATE mailboxes SET is_favorite = ? WHERE id = ?')
       .bind(newFavorite, mailbox_id).run();
+    if (mailbox.address) invalidateMailboxCache(mailbox.address);
     
     return new Response(JSON.stringify({
       success: true,
@@ -174,7 +178,7 @@ export async function handleBatchFavorite(req, env) {
       return new Response(JSON.stringify({ error: '单次最多操作 100 个邮箱' }), { status: 400 });
     }
     
-    const db = env.TEMP_MAIL_DB;
+    const db = env.DB || env.TEMP_MAIL_DB;
     const favoriteValue = is_favorite ? 1 : 0;
     
     // 批量更新
@@ -226,7 +230,7 @@ export async function handleBatchForward(req, env) {
       return new Response(JSON.stringify({ error: '转发目标邮箱格式无效' }), { status: 400 });
     }
     
-    const db = env.TEMP_MAIL_DB;
+    const db = env.DB || env.TEMP_MAIL_DB;
     
     // 批量更新
     const placeholders = mailbox_ids.map(() => '?').join(',');
@@ -271,7 +275,7 @@ export async function handleBatchFavoriteByAddress(req, env) {
       return new Response(JSON.stringify({ error: '单次最多操作 100 个邮箱' }), { status: 400 });
     }
     
-    const db = env.TEMP_MAIL_DB;
+    const db = env.DB || env.TEMP_MAIL_DB;
     const favoriteValue = is_favorite ? 1 : 0;
     
     // 规范化地址
@@ -285,6 +289,7 @@ export async function handleBatchFavoriteByAddress(req, env) {
     const placeholders = normalizedAddresses.map(() => '?').join(',');
     const result = await db.prepare(`UPDATE mailboxes SET is_favorite = ? WHERE address IN (${placeholders})`)
       .bind(favoriteValue, ...normalizedAddresses).run();
+    normalizedAddresses.forEach(address => invalidateMailboxCache(address));
     
     return new Response(JSON.stringify({
       success: true,
@@ -330,7 +335,7 @@ export async function handleBatchForwardByAddress(req, env) {
       return new Response(JSON.stringify({ error: '转发目标邮箱格式无效' }), { status: 400 });
     }
     
-    const db = env.TEMP_MAIL_DB;
+    const db = env.DB || env.TEMP_MAIL_DB;
     
     // 规范化地址
     const normalizedAddresses = addresses.map(a => String(a || '').trim().toLowerCase()).filter(a => a);
@@ -343,6 +348,7 @@ export async function handleBatchForwardByAddress(req, env) {
     const placeholders = normalizedAddresses.map(() => '?').join(',');
     const result = await db.prepare(`UPDATE mailboxes SET forward_to = ? WHERE address IN (${placeholders})`)
       .bind(forwardTarget, ...normalizedAddresses).run();
+    normalizedAddresses.forEach(address => invalidateMailboxCache(address));
     
     return new Response(JSON.stringify({
       success: true,

@@ -53,7 +53,7 @@ const els = {
   boxTitle: document.getElementById('box-title'), boxIcon: document.getElementById('box-icon'), refresh: document.getElementById('refresh'),
   logout: document.getElementById('logout'), modal: document.getElementById('email-modal'), modalClose: document.getElementById('modal-close'),
   modalSubject: document.getElementById('modal-subject'), modalContent: document.getElementById('modal-content'),
-  mbList: document.getElementById('mb-list'), mbSearch: document.getElementById('mb-search'), mbLoading: document.getElementById('mb-loading'),
+  mbList: document.getElementById('mb-list'), mbSearch: document.getElementById('mb-search'), mbLoading: document.getElementById('mb-loading'), mbRefresh: document.getElementById('mb-refresh'),
   toast: document.getElementById('toast'), mbPager: document.getElementById('mb-pager'), mbPrev: document.getElementById('mb-prev'),
   mbNext: document.getElementById('mb-next'), mbPageInfo: document.getElementById('mb-page-info'), listLoading: document.getElementById('list-status'),
   confirmModal: document.getElementById('confirm-modal'), confirmClose: document.getElementById('confirm-close'),
@@ -132,6 +132,14 @@ async function loadMailboxes(opts = {}) {
   finally { setLoading(false); if (els.mbLoading) els.mbLoading.style.display = 'none'; }
 }
 
+let mailboxAutoRefreshTimer = null;
+function startMailboxAutoRefresh() {
+  if (mailboxAutoRefreshTimer) clearInterval(mailboxAutoRefreshTimer);
+  mailboxAutoRefreshTimer = setInterval(() => {
+    if (!document.hidden) loadMailboxes({ forceFresh: true });
+  }, 15000);
+}
+
 function updateMailboxInfoUI(info) {
   if (!info) return;
   if (els.favoriteIcon && els.favoriteText) {
@@ -176,6 +184,7 @@ if (els.mbNext) els.mbNext.onclick = () => nextMbPage(loadMailboxes, getLastCoun
 
 // 搜索
 if (els.mbSearch) { let t = null; els.mbSearch.oninput = () => { if (t) clearTimeout(t); t = setTimeout(() => { setSearchTerm(els.mbSearch.value); resetMbPage(); loadMailboxes(); }, 300); };}
+if (els.mbRefresh) els.mbRefresh.onclick = () => loadMailboxes({ forceFresh: true });
 
 // 长度滑块
 if (lenRange && lenVal) { lenRange.value = String(getStoredLength()); lenVal.textContent = String(getStoredLength()); updateRangeProgress(lenRange); lenRange.oninput = () => { lenVal.textContent = lenRange.value; saveLength(Number(lenRange.value)); updateRangeProgress(lenRange); };}
@@ -218,6 +227,7 @@ initCompose(els, api, showToast);
   else await loadDomains(domainSelect, api);
   try { const qr = await api('/api/user/quota'); const q = await qr.json(); const el = document.getElementById('quota'); if (el && q) { el.textContent = isAdmin() ? `${q.total || 0} 邮箱` : `${q.used || 0} / ${q.limit || 0}`; }} catch(_) {}
   await loadMailboxes();
+  startMailboxAutoRefresh();
   
   // 优先使用 URL 参数中的邮箱，其次使用本地存储的上次邮箱
   const urlParams = new URLSearchParams(window.location.search);

@@ -69,7 +69,7 @@ export async function handleSendApi(request, db, url, path, options) {
         SELECT id, resend_id, to_addrs as recipients, subject, created_at, status
         FROM sent_emails
         WHERE from_addr = ?
-        ORDER BY datetime(created_at) DESC
+        ORDER BY created_at DESC
         LIMIT ?
       `).bind(String(from).trim().toLowerCase(), limit).all();
       return Response.json(results || []);

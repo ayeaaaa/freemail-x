@@ -153,6 +153,16 @@ try{
     }catch(_){ }
     return false;
   }
+
+  function consumeJustLoggedIn(){
+    try{
+      if (sessionStorage.getItem('mf:just_logged_in') === '1'){
+        sessionStorage.removeItem('mf:just_logged_in');
+        return true;
+      }
+    }catch(_){ }
+    return false;
+  }
   
   // 立即执行检查，无论文档状态如何
   checkLoginPageAccess();
@@ -160,6 +170,7 @@ try{
   window.AuthGuard = {
     pollAuth,
     checkLoginPageAccess,
+    consumeJustLoggedIn,
     goLoading: function(target, statusText, options){
       try{
         const force = options && options.force ? true : false;
@@ -217,5 +228,4 @@ try{
     });
   }
 })();
-
 

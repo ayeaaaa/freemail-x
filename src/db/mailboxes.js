@@ -20,10 +20,12 @@ import {
  */
 export async function getOrCreateMailboxId(db, address) {
   const normalized = String(address || '').trim().toLowerCase();
+  console.log('[mailboxes.getOrCreateMailboxId] start', { normalized });
   if (!normalized) throw new Error('无效的邮箱地址');
   
   // 先检查缓存
   const cachedId = await getCachedMailboxId(db, normalized);
+  console.log('[mailboxes.getOrCreateMailboxId] cached', { normalized, cachedId });
   if (cachedId) {
     // 更新访问时间（使用后台任务，不阻塞主流程）
     db.prepare('UPDATE mailboxes SET last_accessed_at = CURRENT_TIMESTAMP WHERE id = ?')
@@ -43,6 +45,7 @@ export async function getOrCreateMailboxId(db, address) {
   
   // 再次查询数据库（避免并发创建）
   const existing = await db.prepare('SELECT id FROM mailboxes WHERE address = ? LIMIT 1').bind(normalized).all();
+  console.log('[mailboxes.getOrCreateMailboxId] existing checked', { normalized, count: existing?.results?.length || 0 });
   if (existing.results && existing.results.length > 0) {
     const id = existing.results[0].id;
     updateMailboxIdCache(normalized, id);
@@ -54,10 +57,12 @@ export async function getOrCreateMailboxId(db, address) {
   await db.prepare(
     'INSERT INTO mailboxes (address, local_part, domain, password_hash, last_accessed_at) VALUES (?, ?, ?, NULL, CURRENT_TIMESTAMP)'
   ).bind(normalized, local_part, domain).run();
+  console.log('[mailboxes.getOrCreateMailboxId] inserted', { normalized });
   
   // 查询新创建的ID
   const created = await db.prepare('SELECT id FROM mailboxes WHERE address = ? LIMIT 1').bind(normalized).all();
   const newId = created.results[0].id;
+  console.log('[mailboxes.getOrCreateMailboxId] created fetched', { normalized, newId });
   
   // 更新缓存
   updateMailboxIdCache(normalized, newId);
