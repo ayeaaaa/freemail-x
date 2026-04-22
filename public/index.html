@@ -77,6 +77,22 @@
             }catch(_){ }
             return;
           }
+
+          if (window.AuthGuard && window.AuthGuard.consumeJustLoggedIn && window.AuthGuard.consumeJustLoggedIn()) {
+            var s2 = document.createElement('script');
+            s2.type = 'module';
+            s2.src = '/js/app.js';
+            document.body.appendChild(s2);
+            try{
+              if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches){
+                var sm2 = document.createElement('script');
+                sm2.type = 'module';
+                sm2.src = '/js/app-mobile.js';
+                document.body.appendChild(sm2);
+              }
+            }catch(_){ }
+            return;
+          }
           
               // 地址栏直接访问或长时间未验证：先尝试快速判断是否已有登录 Cookie
           if (isDirectAccess){
@@ -237,4 +253,3 @@
     </script>
   </body>
   </html>
-
