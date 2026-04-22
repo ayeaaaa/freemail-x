@@ -53,14 +53,20 @@ export async function handleMailboxesApi(request, db, mailDomains, url, path, op
     
     if (!isMock) {
       try {
+        console.log('[generate] start', { email });
         const payload = getJwtPayload(request, options);
         if (payload?.userId) {
+          console.log('[generate] assignMailboxToUser:start', { userId: payload.userId, email });
           await assignMailboxToUser(db, { userId: payload.userId, address: email });
+          console.log('[generate] assignMailboxToUser:done', { userId: payload.userId, email });
           return Response.json({ email, expires: Date.now() + 3600000 });
         }
+        console.log('[generate] getOrCreateMailboxId:start', { email });
         await getOrCreateMailboxId(db, email);
+        console.log('[generate] getOrCreateMailboxId:done', { email });
         return Response.json({ email, expires: Date.now() + 3600000 });
       } catch (e) {
+        console.error('[generate] failed', e);
         return errorResponse(String(e?.message || '创建失败'), 400);
       }
     }

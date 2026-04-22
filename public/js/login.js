@@ -55,6 +55,11 @@ async function doLogin(){
       // 登录成功，直接跳转到目标页面，避免loading页面
       const result = await response.json();
       if (result.success) {
+        try {
+          sessionStorage.setItem('mf:just_logged_in', '1');
+          sessionStorage.setItem('auth_checked', 'true');
+          sessionStorage.setItem('auth_checked_ts', String(Date.now()));
+        } catch (_) {}
         // 根据用户角色智能跳转
         let finalTarget = target;
         if (result.role === 'mailbox') {
@@ -116,4 +121,3 @@ async function doLogin(){
 btn.addEventListener('click', doLogin);
 pwd.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 username.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-

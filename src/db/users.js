@@ -91,7 +91,7 @@ export async function listUsersWithCounts(db, { limit = 50, offset = 0, sort = '
   const usersSql = `
     SELECT u.id, u.username, u.role, u.mailbox_limit, u.can_send, u.created_at
     FROM users u
-    ORDER BY datetime(u.created_at) ${orderDirection}
+    ORDER BY u.created_at ${orderDirection}
     LIMIT ? OFFSET ?
   `;
   const { results: users } = await db.prepare(usersSql).bind(actualLimit, actualOffset).all();
@@ -136,9 +136,11 @@ export async function listUsersWithCounts(db, { limit = 50, offset = 0, sort = '
  */
 export async function assignMailboxToUser(db, { userId = null, username = null, address }) {
   const normalized = String(address || '').trim().toLowerCase();
+  console.log('[users.assignMailboxToUser] start', { userId, username, normalized });
   if (!normalized) throw new Error('邮箱地址无效');
   // 查询或创建邮箱
   const mailboxId = await getOrCreateMailboxId(db, normalized);
+  console.log('[users.assignMailboxToUser] mailbox ready', { mailboxId, normalized });
 
   // 获取用户 ID
   let uid = userId;
@@ -152,10 +154,12 @@ export async function assignMailboxToUser(db, { userId = null, username = null, 
 
   // 使用缓存校验上限
   const quota = await getCachedUserQuota(db, uid);
+  console.log('[users.assignMailboxToUser] quota', { uid, quota });
   if (quota.used >= quota.limit) throw new Error('已达到邮箱上限');
 
   // 绑定（唯一约束避免重复）
-  await db.prepare('INSERT OR IGNORE INTO user_mailboxes (user_id, mailbox_id) VALUES (?, ?)').bind(uid, mailboxId).run();
+  await db.prepare('INSERT INTO user_mailboxes (user_id, mailbox_id) VALUES (?, ?) ON CONFLICT (user_id, mailbox_id) DO NOTHING').bind(uid, mailboxId).run();
+  console.log('[users.assignMailboxToUser] linked', { uid, mailboxId });
   
   // 使缓存失效，下次查询时会重新获取
   invalidateUserQuotaCache(uid);
@@ -177,7 +181,7 @@ export async function getUserMailboxes(db, userId, limit = 100) {
     FROM user_mailboxes um
     JOIN mailboxes m ON m.id = um.mailbox_id
     WHERE um.user_id = ?
-    ORDER BY um.is_pinned DESC, datetime(m.created_at) DESC
+    ORDER BY um.is_pinned DESC, m.created_at DESC
     LIMIT ?
   `;
   const { results } = await db.prepare(sql).bind(userId, Math.min(limit, 200)).all();

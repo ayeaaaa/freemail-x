@@ -102,11 +102,13 @@ export function invalidateMailboxCache(address) {
  */
 export async function getCachedUserQuota(db, userId) {
   if (!userId) return { used: 0, limit: 0 };
+  console.log('[cache.getCachedUserQuota] start', { userId });
   
   const now = Date.now();
   const cached = caches.userQuota.get(userId);
   
   if (cached && cached.expiry > now) {
+    console.log('[cache.getCachedUserQuota] hit', { userId, cached });
     return { used: cached.used, limit: cached.limit };
   }
   
@@ -117,6 +119,7 @@ export async function getCachedUserQuota(db, userId) {
     
     const countRes = await db.prepare('SELECT COUNT(1) AS c FROM user_mailboxes WHERE user_id = ?').bind(userId).all();
     const used = countRes?.results?.[0]?.c || 0;
+    console.log('[cache.getCachedUserQuota] fetched', { userId, used, limit });
     
     caches.userQuota.set(userId, {
       used,

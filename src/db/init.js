@@ -17,6 +17,10 @@ export async function initDatabase(db) {
   try {
     // 清理过期缓存
     clearExpiredCache();
+
+    if (globalThis.__DB_BACKEND__ === 'postgres' || globalThis.__DB_BACKEND__ === 'httpdb') {
+      return;
+    }
     
     // 仅首次启动时执行完整初始化
     if (_isFirstInit) {
@@ -124,6 +128,9 @@ async function migrateMailboxesFields(db) {
  * @returns {Promise<void>}
  */
 export async function setupDatabase(db) {
+  if (globalThis.__DB_BACKEND__ === 'postgres' || globalThis.__DB_BACKEND__ === 'httpdb') {
+    return;
+  }
   await db.exec(`PRAGMA foreign_keys = ON;`);
   
   // 创建所有表
