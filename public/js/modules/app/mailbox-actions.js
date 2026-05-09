@@ -22,15 +22,25 @@ import { resetMbPage } from './mailbox-list.js';
  * @param {Function} loadMailboxes - 加载邮箱函数
  * @param {Function} autoRefreshCallback - 自动刷新回调
  */
+function getSelectedDomain(domainSelect) {
+  const opt = domainSelect?.options?.[domainSelect.selectedIndex];
+  return String(opt?.textContent || '').trim();
+}
+
+function getSubdomainLevels(elements) {
+  return Math.max(1, Math.min(7, Number(elements?.subdomainLevelSelect?.value || 3) || 3));
+}
+
 export async function generateMailbox(elements, lenRange, domainSelect, api, showToast, refresh, loadMailboxes, autoRefreshCallback, updateMailboxInfoUI) {
   const { gen, email, emailActions, listCard } = elements;
   
   try {
     setButtonLoading(gen, '生成中…');
     const len = Number(lenRange?.value || getStoredLength());
-    const domainIndex = getSelectedDomainIndex(domainSelect);
+    const domain = getSelectedDomain(domainSelect);
+    const subdomainLevels = getSubdomainLevels(elements);
     
-    const r = await api(`/api/generate?length=${len}&domainIndex=${domainIndex}`);
+    const r = await api(`/api/generate?length=${len}&domain=${encodeURIComponent(domain)}&subdomainLevels=${subdomainLevels}`);
     if (!r.ok) throw new Error(await r.text());
     
     const data = await r.json();
@@ -79,13 +89,14 @@ export async function generateNameMailbox(elements, lenRange, domainSelect, api,
   try {
     setButtonLoading(genName, '生成中…');
     const len = Number(lenRange?.value || getStoredLength());
-    const domainIndex = getSelectedDomainIndex(domainSelect);
+    const domain = getSelectedDomain(domainSelect);
+    const subdomainLevels = getSubdomainLevels(elements);
     const localName = generateRandomId(len);
     
     const r = await api('/api/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ local: localName, domainIndex })
+      body: JSON.stringify({ local: localName, domain, subdomainLevels })
     });
     
     if (!r.ok) throw new Error(await r.text());
@@ -135,12 +146,13 @@ export async function createCustomMailbox(elements, domainSelect, api, showToast
       showToast('用户名不合法，仅限字母/数字/._-', 'warn');
       return;
     }
-    const domainIndex = getSelectedDomainIndex(domainSelect);
+    const domain = getSelectedDomain(domainSelect);
+    const subdomainLevels = getSubdomainLevels(elements);
     
     const r = await api('/api/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ local, domainIndex })
+      body: JSON.stringify({ local, domain, subdomainLevels })
     });
     
     if (!r.ok) throw new Error(await r.text());

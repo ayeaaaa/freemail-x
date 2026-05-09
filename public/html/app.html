@@ -201,7 +201,14 @@
                   </span>
                   <span>邮箱后缀</span>
                 </label>
-                <select id="domain-select" class="select config-select" aria-label="选择邮箱后缀域名"></select>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <select id="domain-select" class="select config-select" aria-label="选择邮箱后缀域名"></select>
+                  <button id="domain-delete-btn" class="btn btn-ghost btn-sm" title="删除当前域名">删除</button>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                  <input id="domain-add-input" class="input" placeholder="新增根域名，例如 a.com" aria-label="新增根域名" />
+                  <button id="domain-add-btn" class="btn btn-secondary btn-sm">添加</button>
+                </div>
               </div>
               <div class="config-item">
                 <label class="config-label" for="len-range">
@@ -219,6 +226,25 @@
                     <span class="len-unit">位</span>
                   </div>
                 </div>
+              </div>
+              <div class="config-item">
+                <label class="config-label" for="subdomain-level-select">
+                  <span class="label-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <use href="/icons/sprites.svg#icon-layers"/>
+                    </svg>
+                  </span>
+                  <span>随机子域层级</span>
+                </label>
+                <select id="subdomain-level-select" class="select config-select" aria-label="选择随机子域层级">
+                  <option value="1">1 级</option>
+                  <option value="2">2 级</option>
+                  <option value="3" selected>3 级</option>
+                  <option value="4">4 级</option>
+                  <option value="5">5 级</option>
+                  <option value="6">6 级</option>
+                  <option value="7">7 级</option>
+                </select>
               </div>
                <div class="generate-action">
                  <div class="generate-buttons" style="display: flex; gap: 8px; margin-bottom: 8px; width: 100%;">
