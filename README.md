@@ -19,6 +19,35 @@ VPS 管理面板
 -> PostgreSQL
 ```
 
+## VPS 直收 SMTP
+
+仓库中额外提供了一套最小可用的 VPS 直收入口，位置：`tools/smtp-test/`。
+
+这套服务的职责是：
+
+- 监听 SMTP 入站
+- 解析正文 / HTML / 验证码 / 预览
+- 调用现有 `DB_API_URL/inbound-email`
+- 复用现有 PostgreSQL 入库链路
+
+建议环境变量：
+
+```bash
+SMTP_PORT=25
+DB_API_URL=http://127.0.0.1:18080
+DB_API_TOKEN=your-db-api-token
+```
+
+本地验证示例：
+
+```bash
+cd tools/smtp-test
+npm install
+SMTP_TEST_RECIPIENT="test@example.com" npm run send:test
+```
+
+这套服务适合把 `Cloudflare Worker -> VPS /inbound-email` 这一段替换成 `SMTP -> VPS /inbound-email`。
+
 ## 当前版本特征
 
 - 无 D1 主数据路径
@@ -119,6 +148,12 @@ DB_API_TOKEN="your-api-token"
 ## 管理面板
 
 原 `freemail` 面板已经迁到 VPS，可作为单管理员极简后台使用。
+
+当前首页面板还额外支持：
+
+- 在页面内新增 / 删除根域名
+- 生成邮箱时直接使用真实域名，而不是前端域名索引
+- 指定随机子域层级（适合泛域名直收场景）
 
 示例地址：
 
