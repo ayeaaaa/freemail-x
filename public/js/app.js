@@ -72,6 +72,10 @@ const els = {
   favoriteIcon: document.getElementById('favorite-icon'), favoriteText: document.getElementById('favorite-text')
 };
 const lenRange = document.getElementById('len-range'), lenVal = document.getElementById('len-val'), domainSelect = document.getElementById('domain-select');
+els.subdomainLevelSelect = document.getElementById('subdomain-level-select');
+els.domainAddInput = document.getElementById('domain-add-input');
+els.domainAddBtn = document.getElementById('domain-add-btn');
+els.domainDeleteBtn = document.getElementById('domain-delete-btn');
 
 // 初始化
 initSessionFromCache();
@@ -185,6 +189,33 @@ if (els.mbNext) els.mbNext.onclick = () => nextMbPage(loadMailboxes, getLastCoun
 // 搜索
 if (els.mbSearch) { let t = null; els.mbSearch.oninput = () => { if (t) clearTimeout(t); t = setTimeout(() => { setSearchTerm(els.mbSearch.value); resetMbPage(); loadMailboxes(); }, 300); };}
 if (els.mbRefresh) els.mbRefresh.onclick = () => loadMailboxes({ forceFresh: true });
+
+if (els.domainAddBtn) els.domainAddBtn.onclick = async () => {
+  const value = String(els.domainAddInput?.value || '').trim().toLowerCase();
+  if (!value) return showToast('请输入域名', 'warn');
+  try {
+    await api('/api/domains', { method: 'POST', body: JSON.stringify({ domain: value }) });
+    els.domainAddInput.value = '';
+    await loadDomains(domainSelect, api);
+    showToast('域名已添加', 'success');
+  } catch (e) {
+    showToast(e.message || '添加失败', 'error');
+  }
+};
+
+if (els.domainDeleteBtn) els.domainDeleteBtn.onclick = async () => {
+  const opt = domainSelect?.options?.[domainSelect.selectedIndex];
+  const domain = String(opt?.textContent || '').trim();
+  if (!domain) return;
+  if (!confirm(`确认删除域名 ${domain} ?`)) return;
+  try {
+    await api(`/api/domains/${encodeURIComponent(domain)}`, { method: 'DELETE' });
+    await loadDomains(domainSelect, api);
+    showToast('域名已删除', 'success');
+  } catch (e) {
+    showToast(e.message || '删除失败', 'error');
+  }
+};
 
 // 长度滑块
 if (lenRange && lenVal) { lenRange.value = String(getStoredLength()); lenVal.textContent = String(getStoredLength()); updateRangeProgress(lenRange); lenRange.oninput = () => { lenVal.textContent = lenRange.value; saveLength(Number(lenRange.value)); updateRangeProgress(lenRange); };}
