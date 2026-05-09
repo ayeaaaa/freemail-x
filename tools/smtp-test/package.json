@@ -1,8 +1,12 @@
 {
-  "name": "freemail-smtp-test",
+  "name": "freemail-smtp-ingress",
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "send:test": "node send-test.mjs"
+  },
   "dependencies": {
     "smtp-server": "^3.13.6"
   }

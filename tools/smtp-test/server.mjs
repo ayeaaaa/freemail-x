@@ -1,6 +1,6 @@
 import { SMTPServer } from 'smtp-server';
 
-const PORT = Number(process.env.SMTP_PORT || 2525);
+const PORT = Number(process.env.SMTP_PORT || 25);
 const DB_API_URL = String(process.env.DB_API_URL || '').trim().replace(/\/$/, '');
 const DB_API_TOKEN = String(process.env.DB_API_TOKEN || '').trim();
 
@@ -281,5 +281,5 @@ const server = new SMTPServer({
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`SMTP test server listening on ${PORT}`);
+  console.log(`SMTP ingress listening on ${PORT}`);
 });

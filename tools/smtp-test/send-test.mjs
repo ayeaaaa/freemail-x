@@ -1,18 +1,23 @@
 import net from 'node:net';
 
-const client = net.createConnection({ host: '127.0.0.1', port: 2525 });
+const host = process.env.SMTP_HOST || '127.0.0.1';
+const port = Number(process.env.SMTP_PORT || 25);
+const recipient = process.env.SMTP_TEST_RECIPIENT || 'smtpcheck@example.com';
+const subject = process.env.SMTP_TEST_SUBJECT || 'SMTP ingress test 246810';
+const body = process.env.SMTP_TEST_BODY || 'Your verification code is 246810.';
+const client = net.createConnection({ host, port });
 
 const commands = [
   'EHLO localhost',
   'MAIL FROM:<tester@example.com>',
-  'RCPT TO:<smtpcheck@ffaaffai.asia>',
+  `RCPT TO:<${recipient}>`,
   'DATA',
   'From: tester@example.com',
-  'To: smtpcheck@ffaaffai.asia',
-  'Subject: SMTP test 246810',
+  `To: ${recipient}`,
+  `Subject: ${subject}`,
   'Content-Type: text/plain; charset=utf-8',
   '',
-  'Your verification code is 246810.',
+  body,
   '.',
   'QUIT'
 ];
@@ -28,7 +33,7 @@ function sendNext() {
 }
 
 client.on('connect', () => {
-  console.log('connected');
+  console.log(`connected ${host}:${port}`);
 });
 
 client.on('data', (chunk) => {
