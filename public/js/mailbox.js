@@ -5,6 +5,7 @@
 
 import { formatTime, renderEmailItem, renderEmailList, generateSkeletonList, filterEmails, countUnread } from './modules/mailbox/email-list.js';
 import { renderEmailDetail, sanitizeHtml, extractVerificationCode } from './modules/mailbox/email-detail.js';
+import { copyText } from './modules/app/ui-helpers.js';
 
 // showToast 由 toast-utils.js 全局提供
 const showToast = window.showToast || ((msg, type) => console.log(`[${type}] ${msg}`));
@@ -173,7 +174,7 @@ async function showEmail(id) {
     els.modalContent?.querySelectorAll('.code-value').forEach(el => {
       el.onclick = async () => {
         const code = el.dataset.code || el.textContent;
-        try { await navigator.clipboard.writeText(code); showToast('已复制', 'success'); }
+        try { const ok = await copyText(code); showToast(ok ? '已复制' : '复制失败', ok ? 'success' : 'error'); }
         catch(_) { showToast('复制失败', 'error'); }
       };
     });
@@ -323,7 +324,7 @@ async function changePassword() {
 
 // 事件绑定
 els.copyMailboxBtn?.addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(currentMailbox); showToast('已复制', 'success'); }
+  try { const ok = await copyText(currentMailbox); showToast(ok ? '已复制' : '复制失败', ok ? 'success' : 'error'); }
   catch(_) { showToast('复制失败', 'error'); }
 });
 

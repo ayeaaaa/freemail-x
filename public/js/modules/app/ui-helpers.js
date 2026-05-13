@@ -206,6 +206,42 @@ export function showInlineTip(anchorEl, message, type = 'info') {
 }
 
 /**
+ * 复制文本，优先使用 Clipboard API，失败后回退到 execCommand。
+ * @param {string} text - 待复制文本
+ * @returns {Promise<boolean>} 是否复制成功
+ */
+export async function copyText(text) {
+  const value = String(text ?? '');
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      await navigator.clipboard.writeText(value);
+      return true;
+    }
+  } catch (_) {}
+
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-9999px';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, textarea.value.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return !!ok;
+  } catch (_) {
+    try {
+      window.prompt('复制失败，请手动复制下面内容：', value);
+    } catch (_) {}
+    return false;
+  }
+}
+
+/**
  * 创建骨架屏邮件项
  * @returns {string}
  */

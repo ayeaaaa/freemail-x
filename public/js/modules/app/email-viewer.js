@@ -3,7 +3,7 @@
  * @module modules/app/email-viewer
  */
 
-import { escapeHtml, escapeAttr, extractCode } from './ui-helpers.js';
+import { escapeHtml, escapeAttr, extractCode, copyText } from './ui-helpers.js';
 import { getEmailFromCache, setEmailCache } from './email-list.js';
 
 /**
@@ -46,7 +46,7 @@ export async function showEmailDetail(id, elements, api, showToast) {
 
     let codeHtml = '';
     if (code) {
-      codeHtml = `<div class="code-highlight" onclick="navigator.clipboard.writeText('${escapeAttr(code)}').then(()=>showToast('验证码已复制','success'))" title="点击复制" style="cursor:pointer">${escapeHtml(code)}</div>`;
+      codeHtml = `<div class="code-highlight" data-copy-code="${escapeAttr(code)}" title="点击复制" style="cursor:pointer">${escapeHtml(code)}</div>`;
     }
 
     let bodyHtml = '';
@@ -57,6 +57,17 @@ export async function showEmailDetail(id, elements, api, showToast) {
     }
 
     modalContent.innerHTML = `<div class="email-detail-container">${metaHtml}${codeHtml}${bodyHtml}</div>`;
+    modalContent.querySelectorAll('[data-copy-code]').forEach(el => {
+      el.addEventListener('click', async () => {
+        const code = el.getAttribute('data-copy-code') || '';
+        try {
+          const ok = await copyText(code);
+          showToast(ok ? '验证码已复制' : '复制失败', ok ? 'success' : 'error');
+        } catch (_) {
+          showToast('复制失败', 'error');
+        }
+      });
+    });
     modal.classList.add('show');
   } catch(e) {
     showToast(e.message || '加载失败', 'error');
@@ -122,8 +133,9 @@ export async function copyFromEmailList(event, id, api, showToast) {
   
   if (code) {
     try {
-      await navigator.clipboard.writeText(code);
-      showToast(`验证码 ${code} 已复制`, 'success');
+      const ok = await copyText(code);
+      if (ok) showToast(`验证码 ${code} 已复制`, 'success');
+      else throw new Error('copy_failed');
     } catch(_) {
       showToast('复制失败', 'error');
     }
@@ -136,8 +148,9 @@ export async function copyFromEmailList(event, id, api, showToast) {
     }
     const text = email.content || email.html_content?.replace(/<[^>]+>/g, ' ') || '';
     try {
-      await navigator.clipboard.writeText(text.slice(0, 500));
-      showToast('内容已复制', 'success');
+      const ok = await copyText(text.slice(0, 500));
+      if (ok) showToast('内容已复制', 'success');
+      else throw new Error('copy_failed');
     } catch(_) {
       showToast('复制失败', 'error');
     }

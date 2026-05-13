@@ -7,6 +7,7 @@ import { getCurrentUserKey } from './storage.js';
 import { openForwardDialog, toggleFavorite, batchSetFavorite, injectDialogStyles } from './mailbox-settings.js';
 import { api, loadMailboxes as fetchMailboxes, loadDomains as fetchDomains, deleteMailbox as apiDeleteMailbox, toggleLogin as apiToggleLogin, batchToggleLogin, resetPassword as apiResetPassword, changePassword as apiChangePassword } from './modules/mailboxes/api.js';
 import { formatTime, escapeHtml, generateSkeleton, renderGrid, renderList } from './modules/mailboxes/render.js';
+import { copyText } from './modules/app/ui-helpers.js';
 
 injectDialogStyles();
 
@@ -148,7 +149,7 @@ function bindCardEvents() {
       
       switch (action) {
         case 'copy':
-          try { await navigator.clipboard.writeText(address); showToast('已复制', 'success'); }
+          try { const ok = await copyText(address); showToast(ok ? '已复制' : '复制失败', ok ? 'success' : 'error'); }
           catch(_) { showToast('复制失败', 'error'); }
           break;
         case 'jump':
