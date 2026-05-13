@@ -4,7 +4,7 @@
  */
 
 import { setCurrentMailbox, getCurrentMailbox, clearCurrentMailbox, setCurrentMailboxInfo } from './mailbox-state.js';
-import { setButtonLoading, restoreButton } from './ui-helpers.js';
+import { setButtonLoading, restoreButton, copyText } from './ui-helpers.js';
 import { generateRandomId } from './random-name.js';
 import { getStoredLength, saveLength, getSelectedDomainIndex } from './domains.js';
 import { startAutoRefresh, stopAutoRefresh } from './auto-refresh.js';
@@ -285,8 +285,9 @@ export async function copyMailboxAddress(showToast) {
     return;
   }
   try {
-    await navigator.clipboard.writeText(mailbox);
-    showToast(`已复制：${mailbox}`, 'success');
+    const ok = await copyText(mailbox);
+    if (ok) showToast(`已复制：${mailbox}`, 'success');
+    else throw new Error('copy_failed');
   } catch(_) {
     showToast('复制失败', 'error');
   }
