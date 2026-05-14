@@ -48,6 +48,23 @@ SMTP_TEST_RECIPIENT="test@example.com" npm run send:test
 
 这套服务适合把 `Cloudflare Worker -> VPS /inbound-email` 这一段替换成 `SMTP -> VPS /inbound-email`。
 
+### 自动迁移单个域名
+
+仓库提供了一个脚本，可在输入域名和 Cloudflare API Token 后自动完成迁移：
+
+```bash
+npm run migrate:domain -- --domain example.com --token <cloudflare-api-token>
+```
+
+默认会做这些事：
+
+1. 创建 `mail.<domain>` 的 A 和 AAAA
+2. 创建根域 MX 到 `mail.<domain>`
+3. 创建泛子域 MX 到 `mail.<domain>`
+4. 如果发现 `*.<domain>` 仍指向 `route1/2/3.mx.cloudflare.net`，会自动删除并替换
+
+如果根域仍被 Cloudflare Email Routing 托管，脚本会保留根域 MX 并提示你先解锁 Email Routing。
+
 ## 当前版本特征
 
 - 无 D1 主数据路径
