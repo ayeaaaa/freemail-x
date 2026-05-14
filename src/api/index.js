@@ -7,6 +7,7 @@ import { handleUsersApi } from './users.js';
 import { handleMailboxesApi } from './mailboxes.js';
 import { handleEmailsApi } from './emails.js';
 import { handleSendApi } from './send.js';
+import { handleDomainMigrationApi } from './domainMigration.js';
 import { getJwtPayload, errorResponse } from './helpers.js';
 
 /**
@@ -94,6 +95,10 @@ export async function handleApiRequest(request, db, mailDomains, options = {
   response = await handleSendApi(request, db, url, path, options);
   if (response) return response;
 
+  // 域名迁移 API
+  response = await handleDomainMigrationApi(request, url, path, options);
+  if (response) return response;
+
   return errorResponse('未找到 API 路径', 404);
 }
 
@@ -101,3 +106,4 @@ export { handleUsersApi } from './users.js';
 export { handleMailboxesApi } from './mailboxes.js';
 export { handleEmailsApi } from './emails.js';
 export { handleSendApi } from './send.js';
+export { handleDomainMigrationApi } from './domainMigration.js';

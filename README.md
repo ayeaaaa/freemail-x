@@ -65,6 +65,21 @@ npm run migrate:domain -- --domain example.com --token <cloudflare-api-token>
 
 如果根域仍被 Cloudflare Email Routing 托管，脚本会保留根域 MX 并提示你先解锁 Email Routing。
 
+### 网页版域名迁移
+
+如果你已经登录后台的超级管理员账号，也可以直接打开：
+
+- `/html/domain-migrate.html`
+
+在页面里填写：
+
+1. 域名
+2. Cloudflare API Token
+3. VPS IPv4 / IPv6
+4. TTL
+
+提交后会调用后端 `/api/domain-migrate` 自动执行迁移。
+
 ## 当前版本特征
 
 - 无 D1 主数据路径

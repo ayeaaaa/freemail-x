@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="precheck-hide">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>域名迁移 - iDing's临时邮箱</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <style>.precheck-hide body{ visibility: hidden !important; }</style>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <script src="/js/theme-toggle.js"></script>
+    <script src="/js/auth-guard.js" defer></script>
+    <script>
+      (function(){
+        fetch('/api/session', { headers: { 'Cache-Control': 'no-cache' } })
+          .then(r => r.ok ? r.json() : Promise.reject('unauth'))
+          .then(s => {
+            if (s && s.strictAdmin) {
+              try { document.documentElement.classList.remove('precheck-hide'); } catch(_) {}
+              return;
+            }
+            location.replace('/');
+          })
+          .catch(() => {
+            if (window.AuthGuard) { window.AuthGuard.goLoading('/html/domain-migrate.html', '正在校验权限…'); }
+            else { location.replace('/templates/loading.html?redirect=%2Fhtml%2Fdomain-migrate.html'); }
+          });
+      })();
+    </script>
+  </head>
+  <body class="admin-page">
+    <div class="topbar">
+      <div class="brand">
+        <span>域名迁移到 VPS 直收</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn btn-ghost" href="/html/admin.html">返回管理页</a>
+        <a class="btn btn-ghost" href="/">返回首页</a>
+      </div>
+    </div>
+
+    <div class="admin-container" style="max-width: 960px; margin: 24px auto;">
+      <div class="card" style="padding: 24px;">
+        <h2 style="margin-bottom: 16px;">单域名迁移</h2>
+        <p class="muted" style="margin-bottom: 20px;">输入域名和 Cloudflare API Token，自动创建 `mail` 记录、根域 MX 和泛子域 MX。</p>
+
+        <div style="display:grid; gap:16px;">
+          <div>
+            <label class="config-label" for="domain-input">域名</label>
+            <input id="domain-input" class="input" placeholder="example.com" />
+          </div>
+          <div>
+            <label class="config-label" for="token-input">Cloudflare API Token</label>
+            <input id="token-input" class="input" type="password" placeholder="cf_xxxxx" />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <label class="config-label" for="ipv4-input">VPS IPv4</label>
+              <input id="ipv4-input" class="input" value="129.213.16.4" />
+            </div>
+            <div>
+              <label class="config-label" for="ipv6-input">VPS IPv6</label>
+              <input id="ipv6-input" class="input" value="2603:c020:401c:5900:0:f375:c928:2f01" />
+            </div>
+          </div>
+          <div>
+            <label class="config-label" for="ttl-input">TTL</label>
+            <input id="ttl-input" class="input" type="number" value="120" min="60" />
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button id="submit-btn" class="btn btn-primary">开始迁移</button>
+            <button id="clear-btn" class="btn btn-ghost">清空结果</button>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <label class="config-label">执行结果</label>
+          <pre id="result-box" style="background:#0f172a; color:#e2e8f0; padding:16px; border-radius:12px; overflow:auto; min-height:220px; white-space:pre-wrap;"></pre>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/js/domain-migrate.js"></script>
+  </body>
+  </html>
