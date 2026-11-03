@@ -7,9 +7,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
+  background: var(--overlay);
   z-index: 1000;
   align-items: center;
   justify-content: center;
@@ -23,12 +21,10 @@
 
 .modal-card{
   background: var(--card);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
   width: min(90vw, 900px);
   max-height: 85vh;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-2xl), 0 0 0 1px var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   border: 1px solid var(--border-glass);
   transform: scale(0.9);
@@ -43,9 +39,7 @@
   border-bottom: 1px solid var(--border-glass);
   font-weight: 700;
   font-size: 18px;
-  background: var(--primary-gradient-soft);
-  backdrop-filter: var(--blur-lg);
-  -webkit-backdrop-filter: var(--blur-lg);
+  background: var(--accent-soft);
   color: var(--text);
   position: relative;
 }
@@ -64,7 +58,7 @@
   padding: 28px;
   overflow-y: auto;
   max-height: calc(85vh - 80px);
-  background: linear-gradient(180deg, transparent 0%, var(--primary-glass) 100%);
+  background: var(--surface);
 }
 
 /* 发件表单 */
@@ -90,8 +84,6 @@
 .field-textarea{
   width: 100%;
   background: var(--card-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
@@ -108,8 +100,8 @@
 .field-input:focus,
 .field-textarea:focus{
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
 }
 
 .field-textarea{
@@ -140,7 +132,7 @@
 }
 
 .close:hover{
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--surface-2);
   transform: scale(1.1);
 }
 
@@ -171,9 +163,7 @@
 }
 
 .email-meta-card{
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--surface-2);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius);
   padding: 20px;
@@ -209,7 +199,7 @@
   font-weight: 500;
   flex: 1;
   word-break: break-all;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--surface);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-light);
@@ -222,8 +212,6 @@
   justify-content: center;
   padding: 16px;
   background: var(--card-glass);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border-radius: var(--radius);
   border: 1px solid var(--border-glass);
 }
@@ -247,8 +235,8 @@
   align-items: center;
   gap: 6px;
   padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.8);
+  border-radius: var(--radius-full);
+  background: var(--surface);
   border: 1px solid var(--border-light);
   color: var(--text);
   font-size: 12px;
@@ -275,7 +263,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), #8b5cf6, #ec4899);
+  background: var(--accent);
 }
 
 .email-content-text{
@@ -283,22 +271,22 @@
   line-height: 1.7;
   font-size: 15px;
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .code-highlight{
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+  background: var(--success-soft);
   border: 2px solid var(--success);
   border-radius: var(--radius);
   padding: 16px 20px;
   margin: 0 0 20px 0;
-  font-family: 'SF Mono', Monaco, monospace;
+  font-family: var(--font-mono);
   font-size: 20px;
   font-weight: 700;
   text-align: center;
   color: var(--success);
   position: relative;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  box-shadow: var(--shadow);
 }
 
 .code-highlight::before{
@@ -308,9 +296,9 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--success);
-  color: white;
+  color: var(--accent-contrast);
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   font-size: 11px;
   font-weight: 600;
   box-shadow: var(--shadow);
@@ -331,7 +319,7 @@
 .email-content-text a{
   color: var(--primary);
   text-decoration: none;
-  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  border-bottom: 1px solid var(--accent);
   transition: var(--transition);
 }
 
@@ -346,8 +334,8 @@
   padding: 3px 8px;
   border-radius: var(--radius-sm);
   font-size: 0.9em;
-  font-family: 'SF Mono', Monaco, monospace;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  font-family: var(--font-mono);
+  border: 1px solid var(--accent);
 }
 
 .email-content-text pre{
@@ -357,8 +345,6 @@
   overflow-x: auto;
   border: 1px solid var(--border);
   margin: 20px 0;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 .email-content-text blockquote{
@@ -379,8 +365,6 @@
   padding: 60px 20px;
   font-size: 16px;
   background: var(--card-glass);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border-radius: var(--radius);
   margin: 20px;
 }
@@ -392,8 +376,8 @@
 }
 
 .confirm-header{
-  background: linear-gradient(135deg, var(--danger), #dc2626);
-  color: white;
+  background: var(--danger);
+  color: var(--accent-contrast);
 }
 
 .confirm-body{
@@ -447,8 +431,6 @@
   margin-top: 20px;
   padding: 20px;
   background: var(--card-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-glass);
 }
@@ -476,7 +458,7 @@
   font-weight: 700;
   background: var(--primary-light);
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
 }
 
@@ -507,8 +489,6 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   background: var(--card-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-sm);
   padding: 12px 16px;
@@ -523,8 +503,8 @@
 
 .select:focus{
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
   transform: translateY(-1px);
 }
 
@@ -534,10 +514,10 @@
   height: 10px;
   appearance: none;
   -webkit-appearance: none;
-  background: linear-gradient(to right, var(--primary) 0%, var(--border-light) 0%);
-  border-radius: 9999px;
+  background: var(--surface-2);
+  border-radius: var(--radius-full);
   outline: none;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow);
   transition: background 0.2s ease;
 }
 
@@ -545,7 +525,7 @@
 .range::-webkit-slider-runnable-track{
   height: 10px;
   background: transparent;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
 }
 
 .range::-webkit-slider-thumb{
@@ -556,8 +536,8 @@
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(59,130,246,0.35), 0 0 0 3px #fff;
-  border: 1px solid rgba(59,130,246,0.4);
+  box-shadow: var(--shadow), 0 0 0 3px var(--surface);
+  border: 1px solid var(--accent);
   transition: transform .15s ease;
   /* 垂直居中：拇指比轨道高 (22-10)/2 = 6px */
   margin-top: -6px;
@@ -573,8 +553,8 @@
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
-  border: 1px solid rgba(59,130,246,0.4);
-  box-shadow: 0 4px 10px rgba(59,130,246,0.35), 0 0 0 3px #fff;
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow), 0 0 0 3px var(--surface);
 }
 
 /* Firefox 轨道对齐 */

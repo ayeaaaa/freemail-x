@@ -156,7 +156,9 @@ export async function mockApi(path, options = {}) {
     const len = Number(url.searchParams.get('length') || '8');
     const id = mockGenerateId(len);
     const domain = MOCK_STATE.domains[Number(url.searchParams.get('domainIndex') || 0)] || 'example.com';
-    const email = `${id}@${domain}`;
+    const levels = Math.max(0, Math.min(7, Number(url.searchParams.get('subdomainLevels') ?? 0) || 0));
+    const sub = Array.from({ length: levels }, () => mockGenerateId(6)).join('.');
+    const email = `${id}@${sub ? sub + '.' : ''}${domain}`;
     const newMailbox = { 
       id: MOCK_STATE.nextMailboxId++,
       address: email, 
@@ -274,7 +276,9 @@ export async function mockApi(path, options = {}) {
       }
       const domainIndex = Number(body.domainIndex || 0);
       const domain = MOCK_STATE.domains[Math.max(0, Math.min(MOCK_STATE.domains.length - 1, domainIndex))] || 'example.com';
-      const email = `${local}@${domain}`;
+      const levels = Math.max(0, Math.min(7, Number(body.subdomainLevels ?? 0) || 0));
+      const sub = Array.from({ length: levels }, () => mockGenerateId(6)).join('.');
+      const email = `${local}@${sub ? sub + '.' : ''}${domain}`;
       
       if (MOCK_STATE.mailboxes.find(m => m.address === email)) {
         return new Response('邮箱地址已存在', { status: 409 });

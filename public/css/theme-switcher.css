@@ -1,0 +1,140 @@
+/* 主题切换器 */
+.theme-switcher-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-switcher-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.theme-switcher-fixed {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1200;
+  box-shadow: var(--shadow-lg);
+}
+
+.theme-switcher-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.theme-switcher-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1000;
+  width: 240px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.theme-switcher-panel-fixed {
+  position: fixed;
+  right: 20px;
+  bottom: 68px;
+  top: auto;
+  z-index: 1210;
+}
+
+.theme-panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  margin: 2px 0 8px;
+}
+
+.theme-panel-title + .theme-panel-title,
+.theme-mode-row {
+  margin-top: 12px;
+}
+
+.theme-style-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.theme-style-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.theme-style-card:hover {
+  border-color: var(--border-strong);
+}
+
+.theme-style-card.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.theme-swatches {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.theme-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+}
+
+.theme-style-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.theme-mode-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.theme-mode-btn {
+  padding: 7px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.theme-mode-btn:hover {
+  border-color: var(--border-strong);
+}
+
+.theme-mode-btn.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}

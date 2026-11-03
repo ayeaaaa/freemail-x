@@ -3,7 +3,7 @@
  * @module modules/app/compose
  */
 
-import { escapeHtml } from './ui-helpers.js';
+import { escapeHtml, formatTs } from './ui-helpers.js';
 import { getCurrentMailbox } from './mailbox-state.js';
 
 /**
@@ -137,7 +137,7 @@ export function showSentEmailDetail(email, elements) {
       <div class="detail-meta">
         <div class="meta-row"><span class="meta-label">收件人：</span><span class="meta-value">${escapeHtml(recipients)}</span></div>
         <div class="meta-row"><span class="meta-label">状态：</span>${statusBadge}</div>
-        <div class="meta-row"><span class="meta-label">发送时间：</span><span class="meta-value">${escapeHtml(e.created_at || '')}</span></div>
+        <div class="meta-row"><span class="meta-label">发送时间：</span><span class="meta-value">${escapeHtml(formatTs(e.created_at))}</span></div>
       </div>
       <div class="detail-content">
         ${e.html_content ? e.html_content : `<pre>${escapeHtml(e.text_content || '')}</pre>`}

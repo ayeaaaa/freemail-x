@@ -3,23 +3,24 @@
  * @module modules/app/ui-helpers
  */
 
+import { parseServerTime } from '../../core/utils.js';
+
 /**
  * 格式化时间戳为东八区显示
  * @param {string} ts - 时间戳
  * @returns {string}
  */
 export function formatTs(ts) {
-  if (!ts) return '';
+  const d = parseServerTime(ts);
+  if (!d) return ts ? String(ts) : '';
   try {
-    const iso = ts.includes('T') ? ts : ts.replace(' ', 'T');
-    const d = new Date(iso + 'Z');
     return new Intl.DateTimeFormat('zh-CN', {
       timeZone: 'Asia/Shanghai',
       hour12: false,
       year: 'numeric', month: 'numeric', day: 'numeric',
       hour: '2-digit', minute: '2-digit', second: '2-digit'
     }).format(d);
-  } catch (_) { return ts; }
+  } catch (_) { return String(ts); }
 }
 
 /**
@@ -28,24 +29,20 @@ export function formatTs(ts) {
  * @returns {string}
  */
 export function formatTsMobile(ts) {
-  if (!ts) return '<span></span><span></span>';
+  const d = parseServerTime(ts);
+  if (!d) return '<span></span><span></span>';
   try {
-    const iso = ts.includes('T') ? ts : ts.replace(' ', 'T');
-    const d = new Date(iso + 'Z');
-    
     const dateStr = new Intl.DateTimeFormat('zh-CN', {
       timeZone: 'Asia/Shanghai',
       year: 'numeric', month: 'numeric', day: 'numeric'
     }).format(d);
-    
     const timeStr = new Intl.DateTimeFormat('zh-CN', {
       timeZone: 'Asia/Shanghai',
       hour12: false,
       hour: '2-digit', minute: '2-digit', second: '2-digit'
     }).format(d);
-    
     return `<span>${dateStr}</span><span>${timeStr}</span>`;
-  } catch (_) { return `<span></span><span>${ts}</span>`; }
+  } catch (_) { return `<span></span>${ts}`; }
 }
 
 /**
@@ -177,17 +174,6 @@ export function applySessionUI(session, elements = {}) {
         badge.textContent = '演示模式';
       }
     }
-    
-    const adminLink = document.getElementById('admin');
-    const allMailboxesLink = document.getElementById('all-mailboxes');
-    
-    if (session && (session.strictAdmin || session.role === 'guest')) {
-      if (adminLink) adminLink.style.display = 'inline-flex';
-      if (allMailboxesLink) allMailboxesLink.style.display = 'inline-flex';
-    } else {
-      if (adminLink) adminLink.style.display = 'none';
-      if (allMailboxesLink) allMailboxesLink.style.display = 'none';
-    }
   } catch (_) {}
 }
 
@@ -232,7 +218,11 @@ export async function copyText(text) {
     textarea.setSelectionRange(0, textarea.value.length);
     const ok = document.execCommand('copy');
     document.body.removeChild(textarea);
-    return !!ok;
+    if (ok) return true;
+    try {
+      window.prompt('复制失败，请手动复制下面内容：', value);
+    } catch (_) {}
+    return false;
   } catch (_) {
     try {
       window.prompt('复制失败，请手动复制下面内容：', value);

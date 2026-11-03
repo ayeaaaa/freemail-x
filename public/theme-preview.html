@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>主题预览 - Freemail</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script>
+    (function () {
+      try {
+        var saved = JSON.parse(localStorage.getItem('mf:ui-theme') || 'null');
+        var styles = ['calm', 'warm', 'tech'];
+        var style = saved && styles.indexOf(saved.style) !== -1 ? saved.style : 'calm';
+        var mode = saved && (saved.mode === 'light' || saved.mode === 'dark')
+          ? saved.mode
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-style', style);
+        document.documentElement.setAttribute('data-mode', mode);
+      } catch (_) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-switcher.css" />
+  <style>
+    .preview-wrap { max-width: 880px; margin: 0 auto; padding: 24px 20px 80px; }
+    .preview-section { margin-top: 32px; }
+    .preview-section h2 { font-size: 15px; font-weight: 600; color: var(--text-3); margin: 0 0 12px; }
+    .preview-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .preview-code { font-family: var(--font-mono); font-size: 20px; letter-spacing: 2px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <strong style="font-size:15px">Freemail 主题预览</strong>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm">Ghost</button>
+      <button class="btn btn-secondary btn-sm">Secondary</button>
+    </div>
+  </header>
+
+  <main class="preview-wrap">
+    <section class="preview-section">
+      <h2>按钮</h2>
+      <div class="preview-row">
+        <button class="btn btn-primary">主要按钮</button>
+        <button class="btn btn-secondary">次要按钮</button>
+        <button class="btn btn-ghost">幽灵按钮</button>
+        <button class="btn btn-danger">危险按钮</button>
+        <button class="btn btn-primary btn-sm">小号</button>
+        <button class="btn btn-secondary" disabled>禁用</button>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>输入</h2>
+      <div class="preview-grid">
+        <input class="input" placeholder="输入邮箱地址" />
+        <select class="select">
+          <option>选择域名</option>
+          <option>example.com</option>
+        </select>
+        <textarea class="input" rows="2" placeholder="邮件内容"></textarea>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>卡片与徽章</h2>
+      <div class="preview-grid">
+        <div class="card">
+          <div class="preview-row" style="justify-content:space-between">
+            <strong style="font-size:14px">user@example.com</strong>
+            <span class="badge badge-success">已验证</span>
+          </div>
+          <p style="color:var(--text-3);font-size:13px;margin:10px 0 0">验证码：<span class="preview-code">778899</span></p>
+        </div>
+        <div class="card">
+          <div class="preview-row" style="justify-content:space-between">
+            <strong style="font-size:14px">过期邮箱</strong>
+            <span class="badge badge-danger">已过期</span>
+          </div>
+          <p style="color:var(--text-3);font-size:13px;margin:10px 0 0">3 天后自动清理</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>弹窗</h2>
+      <div class="card" style="position:relative;padding:0;overflow:hidden;height:200px">
+        <div class="modal-overlay" style="position:absolute">
+          <div class="modal-card" style="max-width:380px">
+            <strong style="font-size:15px">确认删除该邮箱？</strong>
+            <p style="color:var(--text-3);font-size:13px;margin:10px 0 16px">删除后邮件将无法恢复。</p>
+            <div class="preview-row" style="justify-content:flex-end">
+              <button class="btn btn-ghost btn-sm">取消</button>
+              <button class="btn btn-danger btn-sm">删除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>Toast</h2>
+      <div class="preview-row" style="align-items:flex-start">
+        <div class="toast-item is-success" style="position:static">邮箱已复制</div>
+        <div class="toast-item is-error" style="position:static">生成失败，请重试</div>
+        <div class="toast-item" style="position:static">普通通知</div>
+      </div>
+    </section>
+
+    <section class="preview-section">
+      <h2>分段控件</h2>
+      <div class="segmented">
+        <button class="is-active">全部</button>
+        <button>未读</button>
+        <button>收藏</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/theme.js"></script>
+</body>
+</html>

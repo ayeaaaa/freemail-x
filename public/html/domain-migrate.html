@@ -7,11 +7,27 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <script>
+      (function () {
+        try {
+          var saved = JSON.parse(localStorage.getItem('mf:ui-theme') || 'null');
+          var styles = ['calm', 'warm', 'tech'];
+          var style = saved && styles.indexOf(saved.style) !== -1 ? saved.style : 'calm';
+          var mode = saved && (saved.mode === 'light' || saved.mode === 'dark')
+            ? saved.mode
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-style', style);
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (_) {}
+      })();
+    </script>
     <style>.precheck-hide body{ visibility: hidden !important; }</style>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/theme-switcher.css" />
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/css/admin.css" />
-    <script src="/js/theme-toggle.js"></script>
     <script src="/js/auth-guard.js" defer></script>
     <script>
       (function(){
@@ -22,7 +38,7 @@
               try { document.documentElement.classList.remove('precheck-hide'); } catch(_) {}
               return;
             }
-            location.replace('/');
+            location.replace('/index.html');
           })
           .catch(() => {
             if (window.AuthGuard) { window.AuthGuard.goLoading('/html/domain-migrate.html', '正在校验权限…'); }
@@ -37,20 +53,50 @@
         <span>域名迁移到 VPS 直收</span>
       </div>
       <div class="nav-actions">
-        <a class="btn btn-ghost" href="/html/admin.html">返回管理页</a>
-        <a class="btn btn-ghost" href="/">返回首页</a>
+        <a class="btn btn-ghost" href="/index.html" title="首页">
+          <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="/icons/sprites.svg#icon-home"/>
+            </svg>
+          </span>
+          <span class="btn-text">首页</span>
+        </a>
+        <a class="btn btn-ghost" data-nav-admin href="/html/mailboxes.html" title="所有邮箱" style="display:none">
+          <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="/icons/sprites.svg#icon-package"/>
+            </svg>
+          </span>
+          <span class="btn-text">所有邮箱</span>
+        </a>
+        <a class="btn btn-ghost" data-nav-admin href="/html/admin.html" title="用户管理" style="display:none">
+          <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="/icons/sprites.svg#icon-wrench"/>
+            </svg>
+          </span>
+          <span class="btn-text">用户管理</span>
+        </a>
+        <button id="logout" class="btn btn-secondary" title="退出登录">
+          <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="/icons/sprites.svg#icon-logout"/>
+            </svg>
+          </span>
+          <span class="btn-text">退出登录</span>
+        </button>
       </div>
     </div>
 
     <div class="admin-container" style="max-width: 960px; margin: 24px auto;">
       <div class="card" style="padding: 24px;">
-        <h2 style="margin-bottom: 16px;">单域名迁移</h2>
-        <p class="muted" style="margin-bottom: 20px;">输入域名和 Cloudflare API Token，自动创建 `mail` 记录、根域 MX 和泛子域 MX。</p>
+        <h2 style="margin-bottom: 16px;">批量域名迁移</h2>
+        <p class="muted" style="margin-bottom: 20px;">支持一次粘贴多个域名，一行一个。系统会按顺序自动创建 `mail` 记录、根域 MX 和泛子域 MX。</p>
 
         <div style="display:grid; gap:16px;">
           <div>
-            <label class="config-label" for="domain-input">域名</label>
-            <input id="domain-input" class="input" placeholder="example.com" />
+            <label class="config-label" for="domain-input">域名列表</label>
+            <textarea id="domain-input" class="input" rows="8" placeholder="example.com&#10;foo.com&#10;bar.net" style="min-height: 180px; resize: vertical;"></textarea>
           </div>
           <div>
             <label class="config-label" for="token-input">Cloudflare API Token</label>
@@ -71,18 +117,27 @@
             <input id="ttl-input" class="input" type="number" value="120" min="60" />
           </div>
           <div style="display:flex; gap:12px;">
-            <button id="submit-btn" class="btn btn-primary">开始迁移</button>
+            <button id="submit-btn" class="btn btn-primary">开始批量迁移</button>
+            <button id="verify-btn" class="btn btn-secondary">先检测 Token</button>
             <button id="clear-btn" class="btn btn-ghost">清空结果</button>
           </div>
         </div>
 
         <div style="margin-top:24px;">
           <label class="config-label">执行结果</label>
-          <pre id="result-box" style="background:#0f172a; color:#e2e8f0; padding:16px; border-radius:12px; overflow:auto; min-height:220px; white-space:pre-wrap;"></pre>
+          <pre id="result-box" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-md); font-family:var(--font-mono); padding:16px; overflow:auto; min-height:220px; white-space:pre-wrap;"></pre>
         </div>
       </div>
     </div>
 
     <script type="module" src="/js/domain-migrate.js"></script>
+    <script src="/js/nav.js"></script>
+    <script>
+      document.getElementById('logout')?.addEventListener('click', async () => {
+        try { await fetch('/api/logout', { method: 'POST' }); } catch (_) {}
+        location.replace('/html/login.html');
+      });
+    </script>
+    <script src="/js/theme.js"></script>
   </body>
   </html>

@@ -4,6 +4,7 @@
  */
 
 import { escapeHtml, escapeAttr } from '../app/ui-helpers.js';
+import { parseServerTime } from '../../core/utils.js';
 
 /**
  * 格式化时间戳
@@ -11,10 +12,9 @@ import { escapeHtml, escapeAttr } from '../app/ui-helpers.js';
  * @returns {string}
  */
 export function formatTime(ts) {
-  if (!ts) return '';
+  const d = parseServerTime(ts);
+  if (!d) return ts ? String(ts) : '';
   try {
-    const iso = ts.includes('T') ? ts : ts.replace(' ', 'T');
-    const d = new Date(iso + 'Z');
     return new Intl.DateTimeFormat('zh-CN', {
       timeZone: 'Asia/Shanghai',
       hour12: false,
@@ -26,7 +26,7 @@ export function formatTime(ts) {
       second: '2-digit'
     }).format(d);
   } catch (_) {
-    return ts;
+    return String(ts);
   }
 }
 
@@ -154,8 +154,8 @@ export function sortEmails(emails, sortBy = 'received_at', order = 'desc') {
         break;
       case 'received_at':
       default:
-        valueA = new Date(a.received_at || 0);
-        valueB = new Date(b.received_at || 0);
+        valueA = parseServerTime(a.received_at)?.getTime() ?? 0;
+        valueB = parseServerTime(b.received_at)?.getTime() ?? 0;
         break;
     }
     

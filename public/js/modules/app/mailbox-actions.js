@@ -28,7 +28,16 @@ function getSelectedDomain(domainSelect) {
 }
 
 function getSubdomainLevels(elements) {
-  return Math.max(1, Math.min(7, Number(elements?.subdomainLevelSelect?.value || 3) || 3));
+  return Math.max(0, Math.min(7, Number(elements?.subdomainLevelSelect?.value ?? 0) || 0));
+}
+
+function setAccessCode(elements, code) {
+  const row = elements?.accessCodeRow;
+  const text = elements?.accessCodeText;
+  if (!row || !text) return;
+  const value = String(code || '').trim();
+  text.textContent = value;
+  row.style.display = value ? 'flex' : 'none';
 }
 
 export async function generateMailbox(elements, lenRange, domainSelect, api, showToast, refresh, loadMailboxes, autoRefreshCallback, updateMailboxInfoUI) {
@@ -48,6 +57,7 @@ export async function generateMailbox(elements, lenRange, domainSelect, api, sho
     
     setCurrentMailbox(data.email);
     updateEmailDisplay(elements, data.email);
+    setAccessCode(elements, data.access_code);
     
     // 获取完整的邮箱信息（包括 id、is_favorite 等）
     try {
@@ -105,6 +115,7 @@ export async function generateNameMailbox(elements, lenRange, domainSelect, api,
     
     setCurrentMailbox(data.email);
     updateEmailDisplay(elements, data.email);
+    setAccessCode(elements, data.access_code);
     
     // 获取完整的邮箱信息（包括 id、is_favorite 等）
     try {
@@ -160,6 +171,7 @@ export async function createCustomMailbox(elements, domainSelect, api, showToast
     
     setCurrentMailbox(data.email);
     updateEmailDisplay(elements, data.email);
+    setAccessCode(elements, data.access_code);
     if (customOverlay) customOverlay.style.display = 'none';
     
     showToast('已创建邮箱：' + data.email, 'success');
@@ -197,6 +209,7 @@ export function updateEmailDisplay(elements, address) {
 export async function selectMailboxAddress(address, elements, api, refresh, autoRefreshCallback, updateMailboxInfoUI) {
   setCurrentMailbox(address);
   updateEmailDisplay(elements, address);
+  setAccessCode(elements, '');
   
   // 更新侧边栏选中状态
   document.querySelectorAll('.mailbox-item').forEach(el => {
@@ -210,6 +223,7 @@ export async function selectMailboxAddress(address, elements, api, refresh, auto
       const info = await r.json();
       setCurrentMailboxInfo(info);
       updateMailboxInfoUI(info);
+      setAccessCode(elements, info.access_code);
     }
   } catch(_) {}
   
@@ -261,6 +275,7 @@ export async function deleteMailboxAddress(event, address, elements, api, showTo
       showToast('邮箱已删除', 'success');
       if (getCurrentMailbox() === address) {
         clearCurrentMailbox();
+        setAccessCode(elements, '');
         if (elements.email) elements.email.textContent = '点击生成邮箱';
         elements.email?.classList.remove('has-email');
         if (elements.emailActions) elements.emailActions.style.display = 'none';

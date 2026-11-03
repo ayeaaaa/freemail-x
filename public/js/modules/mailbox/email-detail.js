@@ -5,6 +5,9 @@
 
 import { escapeHtml, escapeAttr } from '../app/ui-helpers.js';
 import { formatTime } from './email-list.js';
+import { sanitizeHtml } from '../../core/sanitize.js';
+
+export { sanitizeHtml };
 
 /**
  * 渲染邮件详情
@@ -63,45 +66,6 @@ export function renderEmailDetail(email) {
       </div>
     </div>
   `;
-}
-
-/**
- * 简单的 HTML 清理（移除危险标签和属性）
- * @param {string} html - 原始 HTML
- * @returns {string}
- */
-export function sanitizeHtml(html) {
-  if (!html) return '';
-  
-  // 创建一个临时容器
-  const temp = document.createElement('div');
-  temp.innerHTML = html;
-  
-  // 移除危险标签
-  const dangerousTags = ['script', 'style', 'iframe', 'object', 'embed', 'form'];
-  dangerousTags.forEach(tag => {
-    const elements = temp.querySelectorAll(tag);
-    elements.forEach(el => el.remove());
-  });
-  
-  // 移除危险属性
-  const dangerousAttrs = ['onclick', 'onerror', 'onload', 'onmouseover', 'onfocus', 'onblur'];
-  const allElements = temp.querySelectorAll('*');
-  allElements.forEach(el => {
-    dangerousAttrs.forEach(attr => {
-      el.removeAttribute(attr);
-    });
-    
-    // 处理 href 和 src 中的 javascript:
-    if (el.hasAttribute('href') && el.getAttribute('href').toLowerCase().startsWith('javascript:')) {
-      el.removeAttribute('href');
-    }
-    if (el.hasAttribute('src') && el.getAttribute('src').toLowerCase().startsWith('javascript:')) {
-      el.removeAttribute('src');
-    }
-  });
-  
-  return temp.innerHTML;
 }
 
 /**

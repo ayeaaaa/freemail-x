@@ -5,6 +5,7 @@
 
 import { escapeHtml, escapeAttr, extractCode, copyText } from './ui-helpers.js';
 import { getEmailFromCache, setEmailCache } from './email-list.js';
+import { parseServerTime } from '../../core/utils.js';
 
 /**
  * 显示邮件详情
@@ -33,12 +34,10 @@ export async function showEmailDetail(id, elements, api, showToast) {
     // 展示收件人地址（别名地址）
     if (email.to_addrs) metaHtml += `<span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="/icons/sprites.svg#icon-mail"/></svg> 收件人：${escapeHtml(email.to_addrs)}</span>`;
     if (email.received_at) {
-      const normalized = String(email.received_at).replace(' ', 'T');
-      const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2}|[+-]\d{2})$/i.test(normalized);
-      const d = new Date(hasTimezone ? normalized : `${normalized}Z`);
-      const timeStr = Number.isNaN(d.getTime())
-        ? String(email.received_at)
-        : new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(d);
+      const d = parseServerTime(email.received_at);
+      const timeStr = d
+        ? new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(d)
+        : String(email.received_at);
       metaHtml += `<span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="/icons/sprites.svg#icon-clock"/></svg> ${timeStr}</span>`;
     }
     if (email.download) metaHtml += `<span><a href="${email.download}" download style="color:var(--primary);text-decoration:none"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="/icons/sprites.svg#icon-download"/></svg> 下载 EML</a></span>`;

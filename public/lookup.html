@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>访问码查邮箱 - 临时邮箱柜</title>
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-switcher.css" />
+  <link rel="stylesheet" href="/css/lookup.css" />
+</head>
+<body class="lookup-page">
+  <header class="lookup-header">
+    <a class="lookup-brand" href="/">
+      <span class="lookup-brand-icon">✉</span>
+      <span>临时邮箱柜</span>
+    </a>
+    <a class="lookup-login-link" href="/html/login.html">管理登录</a>
+  </header>
+
+  <main class="lookup-main">
+    <section class="lookup-hero">
+      <h1>输入访问码查看邮箱</h1>
+      <form id="lookup-form" class="lookup-form" novalidate>
+        <div id="access-code-boxes" class="code-boxes" role="group" aria-label="8 位访问码">
+          <input id="access-code-input" class="code-input" type="text" inputmode="text" pattern="[A-Za-z0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="8 位访问码" />
+          <div class="code-box" data-index="0" aria-hidden="true"></div>
+          <div class="code-box" data-index="1" aria-hidden="true"></div>
+          <div class="code-box" data-index="2" aria-hidden="true"></div>
+          <div class="code-box" data-index="3" aria-hidden="true"></div>
+          <div class="code-box" data-index="4" aria-hidden="true"></div>
+          <div class="code-box" data-index="5" aria-hidden="true"></div>
+          <div class="code-box" data-index="6" aria-hidden="true"></div>
+          <div class="code-box" data-index="7" aria-hidden="true"></div>
+        </div>
+        <button id="lookup-btn" class="btn btn-primary" type="submit">查询</button>
+      </form>
+      <p id="lookup-error" class="lookup-error" role="alert"></p>
+    </section>
+
+    <section id="lookup-result" class="lookup-result" hidden>
+      <div class="card lookup-mailbox">
+        <div>
+          <div class="lookup-label">邮箱地址</div>
+          <div id="lookup-address" class="lookup-address"></div>
+        </div>
+        <div class="lookup-mailbox-actions">
+          <button id="lookup-copy" class="btn btn-secondary btn-sm" type="button">复制地址</button>
+          <button id="lookup-refresh" class="btn btn-ghost btn-sm" type="button">刷新</button>
+        </div>
+      </div>
+
+      <div class="card lookup-emails-card">
+        <div class="lookup-emails-header">
+          <span>邮件</span>
+          <span id="lookup-count" class="lookup-count"></span>
+        </div>
+        <div id="lookup-email-list" class="lookup-email-list"></div>
+      </div>
+    </section>
+
+    <section id="lookup-detail" class="card lookup-detail" hidden>
+      <div class="lookup-detail-header">
+        <div>
+          <div id="lookup-detail-subject" class="lookup-detail-subject"></div>
+          <div id="lookup-detail-meta" class="lookup-detail-meta"></div>
+        </div>
+        <button id="lookup-detail-close" class="btn btn-ghost btn-sm" type="button">关闭</button>
+      </div>
+      <div id="lookup-detail-body" class="lookup-detail-body"></div>
+    </section>
+  </main>
+
+  <footer class="lookup-footer">仅用于查看临时邮箱 · 邮件保留 3 天，邮箱地址长期保留</footer>
+
+  <script src="/js/theme.js" defer></script>
+  <script type="module" src="/js/lookup.js"></script>
+</body>
+</html>

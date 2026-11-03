@@ -3,22 +3,23 @@
  * @module modules/mailboxes/render
  */
 
+import { parseServerTime } from '../../core/utils.js';
+
 /**
  * 格式化时间
  * @param {string} ts - 时间戳
  * @returns {string}
  */
 export function formatTime(ts) {
-  if (!ts) return '';
-  const normalized = String(ts).replace(' ', 'T');
-  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2}|[+-]\d{2})$/i.test(normalized);
-  const d = new Date(hasTimezone ? normalized : `${normalized}Z`);
-  if (Number.isNaN(d.getTime())) return String(ts);
-  return new Intl.DateTimeFormat('zh-CN', {
-    timeZone: 'Asia/Shanghai', hour12: false,
-    year: 'numeric', month: 'numeric', day: 'numeric',
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
-  }).format(d);
+  const d = parseServerTime(ts);
+  if (!d) return ts ? String(ts) : '';
+  try {
+    return new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai', hour12: false,
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).format(d);
+  } catch (_) { return String(ts); }
 }
 
 /**

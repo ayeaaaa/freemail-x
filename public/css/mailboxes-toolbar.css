@@ -50,11 +50,11 @@
 
 .filter-select {
   padding: 8px 12px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   font-size: 13px;
-  color: #475569;
-  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-2);
+  background: var(--surface);
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 100px;
@@ -62,14 +62,14 @@
 }
 
 .filter-select:hover {
-  border-color: rgba(99, 102, 241, 0.4);
-  background: rgba(255, 255, 255, 1);
+  border-color: var(--accent);
+  background: var(--surface);
 }
 
 .filter-select:focus {
-  border-color: rgba(99, 102, 241, 0.6);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-  background: rgba(255, 255, 255, 1);
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--surface);
 }
 
 /* 批量操作按钮区域 */
@@ -93,7 +93,7 @@
 
 .batch-actions .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 /* 列表视图样式 */
@@ -121,10 +121,10 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: var(--card-glass);
-  border: 1px solid var(--border-glass);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-glass);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 60px;
@@ -132,9 +132,9 @@
 
 .mailbox-list-item:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  border-color: rgba(99, 102, 241, 0.3);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+  background: var(--surface-2);
 }
 
 /* 置顶指示器（包含置顶、收藏、转发图标） */
@@ -148,24 +148,24 @@
 }
 
 .pin-icon {
-  color: #f59e0b;
+  color: var(--warning);
   font-size: 16px;
-  text-shadow: 0 1px 3px rgba(245, 158, 11, 0.3);
+  text-shadow: var(--shadow);
   transition: transform 0.2s ease;
 }
 
 .favorite-icon {
-  color: #fbbf24;
+  color: var(--warning);
   font-size: 14px;
-  text-shadow: 0 1px 3px rgba(251, 191, 36, 0.3);
+  text-shadow: var(--shadow);
   transition: transform 0.2s ease;
   margin-left: 2px;
 }
 
 .forward-icon {
-  color: #3b82f6;
+  color: var(--accent);
   font-size: 14px;
-  text-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+  text-shadow: var(--shadow);
   transition: transform 0.2s ease;
   margin-left: 2px;
 }
@@ -207,7 +207,7 @@
   display: flex;
   gap: 8px;
   font-size: 12px;
-  color: #64748b;
+  color: var(--text-3);
   flex-wrap: wrap;
   align-items: center;
 }
@@ -218,7 +218,7 @@
 
 /* 时间显示 */
 .mailbox-info .meta .meta-time {
-  color: #94a3b8;
+  color: var(--text-3);
   min-width: 130px;
 }
 
@@ -229,8 +229,8 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  border-radius: 6px;
-  background: rgba(241, 245, 249, 0.8);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
   font-size: 14px;
   cursor: help;
   transition: all 0.2s ease;
@@ -238,21 +238,21 @@
 
 .mailbox-info .meta .meta-status:hover {
   transform: scale(1.1);
-  background: rgba(226, 232, 240, 0.9);
+  background: var(--surface-2);
 }
 
 /* 登录状态 */
 .mailbox-info .meta .meta-login.enabled {
-  background: rgba(34, 197, 94, 0.15);
+  background: var(--success-soft);
 }
 
 .mailbox-info .meta .meta-login.disabled {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--danger-soft);
 }
 
 /* 收藏状态 */
 .mailbox-info .meta .meta-fav.active {
-  background: rgba(251, 191, 36, 0.2);
+  background: var(--warning-soft);
 }
 
 /* 转发地址显示 */
@@ -261,10 +261,10 @@
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 12px;
-  color: #3b82f6;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--accent);
   font-size: 11px;
   max-width: 200px;
   overflow: hidden;
@@ -272,7 +272,7 @@
 }
 
 .mailbox-info .meta .meta-forward-empty {
-  color: #cbd5e1;
+  color: var(--text-3);
   font-size: 16px;
 }
 
@@ -282,12 +282,10 @@
   gap: 8px;
   flex-shrink: 0;
   align-items: center;
-  background: rgba(248, 250, 252, 0.6);
+  background: var(--surface-2);
   padding: 6px;
-  border-radius: 10px;
-  border: 1px solid rgba(226, 232, 240, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
 }
 
 .list-actions .btn {
@@ -295,10 +293,10 @@
   font-size: 14px;
   min-width: 36px;
   height: 36px;
-  border-radius: 8px;
-  border: 1px solid rgba(226, 232, 240, 0.6);
-  background: rgba(255, 255, 255, 0.8);
-  color: #475569;
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -315,19 +313,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+  background: var(--accent-soft);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 
 .list-actions .btn:hover {
   transform: translateY(-2px);
-  background: rgba(99, 102, 241, 0.1);
-  border-color: rgba(99, 102, 241, 0.3);
-  color: #4338ca;
-  box-shadow: 
-    0 6px 20px rgba(99, 102, 241, 0.2),
-    0 3px 10px rgba(0, 0, 0, 0.1);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-hover);
+  box-shadow: var(--shadow-lg);
 }
 
 .list-actions .btn:hover::before {
@@ -335,12 +331,10 @@
 }
 
 .list-actions .btn.active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: #10b981;
-  color: white;
-  box-shadow: 
-    0 4px 14px rgba(16, 185, 129, 0.4),
-    0 2px 6px rgba(0, 0, 0, 0.1);
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--accent-contrast);
+  box-shadow: var(--shadow);
 }
 
 .list-actions .btn.active::before {
@@ -493,7 +487,7 @@
 /* 邮箱卡片额外样式 */
 .card.mailbox { padding: 12px; }
 .card.mailbox .addr { font-weight: 600; word-break: break-all; }
-.meta { color:#475569; font-size:12px; margin-top:6px }
+.meta { color: var(--text-2); font-size:12px; margin-top:6px }
 .topbar .nav-actions .btn { margin-left:8px }
 .pager { display:flex; justify-content:center; align-items:center; gap:8px; margin-top:12px }
 
@@ -504,13 +498,13 @@
 
 .form-textarea:focus {
   outline: none;
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  background: rgba(255, 255, 255, 1);
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--surface);
 }
 
 .form-textarea:hover {
-  border-color: rgba(203, 213, 225, 1);
+  border-color: var(--border-strong);
 }
 
 .batch-btn-loading {
@@ -601,4 +595,3 @@
     flex: 1;
   }
 }
-

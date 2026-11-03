@@ -3,6 +3,8 @@
  * @module modules/mailboxes/filters
  */
 
+import { parseServerTime } from '../../core/utils.js';
+
 /**
  * 筛选状态
  */
@@ -142,8 +144,8 @@ export function sortMailboxes(mailboxes, sortBy = 'created_at', sortOrder = 'des
         break;
       case 'created_at':
       default:
-        valueA = new Date(a.created_at || 0);
-        valueB = new Date(b.created_at || 0);
+        valueA = parseServerTime(a.created_at)?.getTime() ?? 0;
+        valueB = parseServerTime(b.created_at)?.getTime() ?? 0;
         break;
     }
     

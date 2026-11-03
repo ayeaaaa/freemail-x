@@ -9,29 +9,29 @@
   </div>
   <div id="role-badge" class="role-badge" title="欢迎用户："></div>
   <div class="nav-actions">
-    <a id="repo" class="btn btn-ghost" href="https://github.com/idinging/freemail" target="_blank" rel="noopener noreferrer" title="GitHub 开源仓库">
-      <span class="btn-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <use href="/icons/sprites.svg#icon-github"/>
-        </svg>
-      </span>
-      <span class="btn-text">GitHub</span>
-    </a>
-    <a id="admin" class="btn btn-ghost" href="/templates/loading.html?redirect=%2Fadmin.html&status=%E6%AD%A3%E5%9C%A8%E6%A0%A1%E9%AA%8C%E6%9D%83%E9%99%90%E2%80%A6" title="用户管理" style="display:none">
+    <a class="btn btn-ghost" href="/index.html" title="首页">
       <span class="btn-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <use href="/icons/sprites.svg#icon-wrench"/>
+          <use href="/icons/sprites.svg#icon-home"/>
         </svg>
       </span>
-      <span class="btn-text">用户管理</span>
+      <span class="btn-text">首页</span>
     </a>
-    <a id="all-mailboxes" class="btn btn-ghost" href="/templates/loading.html?redirect=%2Fhtml%2Fmailboxes.html&status=%E6%AD%A3%E5%9C%A8%E6%89%93%E5%BC%80%E9%82%AE%E7%AE%B1%E6%80%BB%E8%A7%88%E9%A1%B5%E9%9D%A2%E2%80%A6" title="所有邮箱" style="display:none">
+    <a class="btn btn-ghost" data-nav-admin href="/html/mailboxes.html" title="所有邮箱" style="display:none">
       <span class="btn-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <use href="/icons/sprites.svg#icon-package"/>
         </svg>
       </span>
       <span class="btn-text">所有邮箱</span>
+    </a>
+    <a class="btn btn-ghost" data-nav-admin href="/html/admin.html" title="用户管理" style="display:none">
+      <span class="btn-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <use href="/icons/sprites.svg#icon-wrench"/>
+        </svg>
+      </span>
+      <span class="btn-text">用户管理</span>
     </a>
     <button id="logout" class="btn btn-secondary" title="退出登录">
       <span class="btn-icon">
@@ -120,6 +120,11 @@
                   <input id="custom-local-overlay" class="input custom-input" type="text" placeholder="仅限字母/数字/._-" aria-label="自定义邮箱用户名" />
                   <button id="create-custom-overlay" class="btn btn-primary btn-sm">创建</button>
                 </div>
+              </div>
+              <div id="access-code-row" class="access-code-row" style="display:none">
+                <span class="access-code-label">访问码</span>
+                <code id="access-code-text" class="access-code-text"></code>
+                <button id="copy-access-code" class="btn btn-ghost btn-sm" type="button">复制</button>
               </div>
             </div>
             <div class="mailbox-actions" id="email-actions" style="display:none">
@@ -237,9 +242,10 @@
                   <span>随机子域层级</span>
                 </label>
                 <select id="subdomain-level-select" class="select config-select" aria-label="选择随机子域层级">
+                  <option value="0" selected>0 级（根域名）</option>
                   <option value="1">1 级</option>
                   <option value="2">2 级</option>
-                  <option value="3" selected>3 级</option>
+                  <option value="3">3 级</option>
                   <option value="4">4 级</option>
                   <option value="5">5 级</option>
                   <option value="6">6 级</option>

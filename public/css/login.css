@@ -1,33 +1,8 @@
 /* =============================================
-   Freemail 登录页美化主题
+   Freemail 登录页主题（令牌化）
    ============================================= */
 
 :root{
-  --surface: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 25%, #f8fafc 50%, #fff1f2 75%, #fef3e8 100%);
-  --surface-overlay: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.95) 100%);
-  --card: rgba(255, 255, 255, 0.75);
-  --card-shadow: rgba(255, 255, 255, 0.2);
-  --card-glass: rgba(255, 255, 255, 0.5);
-  --muted: #64748b;
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-active: #4338ca;
-  --primary-light: rgba(99, 102, 241, 0.12);
-  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --border-glass: rgba(255, 255, 255, 0.35);
-  --text: #0f172a;
-  --text-light: #334155;
-  --danger: #ef4444;
-  --danger-light: rgba(239, 68, 68, 0.12);
-  --success: #10b981;
-  --radius: 24px;
-  --radius-sm: 14px;
-  --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
-  --shadow-glass: 0 8px 32px rgba(99, 102, 241, 0.12);
-  --shadow-glow: 0 0 60px rgba(99, 102, 241, 0.15);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -69,57 +44,13 @@ html, body {
 
 body {
   margin: 0;
-  background: var(--surface);
-  background-attachment: fixed;
-  font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg);
+  font-family: var(--font-sans);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
   overflow: hidden;
-}
-
-body::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: 
-    radial-gradient(ellipse at 20% 80%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 40% 40%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 70%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
-  animation: backgroundShift 20s ease-in-out infinite alternate;
-  z-index: -1;
-}
-
-body::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(99, 102, 241, 0.08), transparent),
-    radial-gradient(ellipse 80% 50% at 0% 100%, rgba(236, 72, 153, 0.06), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(16, 185, 129, 0.06), transparent);
-  z-index: -1;
-  animation: backgroundPulse 10s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes backgroundShift {
-  0% { transform: translateX(-30px) translateY(-20px) rotate(0deg) scale(1); }
-  50% { transform: translateX(20px) translateY(15px) rotate(0.5deg) scale(1.03); }
-  100% { transform: translateX(30px) translateY(20px) rotate(-0.5deg) scale(1.05); }
-}
-
-@keyframes backgroundPulse {
-  0% { opacity: 0.7; }
-  100% { opacity: 1; }
 }
 
 .center {
@@ -134,39 +65,15 @@ body::after {
 
 .card {
   width: min(90vw, 440px);
-  background: var(--card);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-radius: var(--radius);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   padding: 48px 44px;
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--shadow-glass), var(--shadow-glow);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   position: relative;
   overflow: hidden;
   animation: cardSlideIn 0.7s var(--spring);
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--primary-gradient);
-  border-radius: var(--radius) var(--radius) 0 0;
-}
-
-.card::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
-  pointer-events: none;
 }
 
 @keyframes cardSlideIn {
@@ -188,7 +95,6 @@ body::after {
   justify-content: center;
   margin-bottom: 20px;
   animation: logoFloat 4s ease-in-out infinite;
-  filter: drop-shadow(0 8px 16px rgba(99, 102, 241, 0.25));
   position: relative;
   z-index: 1;
 }
@@ -196,7 +102,7 @@ body::after {
 .logo svg {
   width: 72px;
   height: 72px;
-  color: var(--primary);
+  color: var(--accent);
   stroke: currentColor;
   transition: transform 0.3s ease;
 }
@@ -216,20 +122,10 @@ h1 {
   font-size: 30px;
   font-weight: 800;
   margin: 0 0 32px 0;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
   letter-spacing: -0.03em;
-  background-size: 200% 200%;
-  animation: gradientFlow 4s ease infinite;
   position: relative;
   z-index: 1;
-}
-
-@keyframes gradientFlow {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 .err {
@@ -240,12 +136,10 @@ h1 {
   font-size: 14px;
   padding: 12px 18px;
   border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(248, 113, 113, 0.08));
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: var(--danger-soft);
+  border: 1px solid var(--danger);
   display: none;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  box-shadow: var(--shadow);
   position: relative;
   z-index: 1;
 }
@@ -266,13 +160,12 @@ h1 {
 
 .input {
   width: 100%;
+  height: auto;
   padding: 16px 20px;
-  border: 1.5px solid var(--border-glass);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
   margin-bottom: 20px;
-  background: var(--card-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--surface);
   font-size: 16px;
   transition: all 0.25s var(--ease-out-expo);
   font-weight: 500;
@@ -283,29 +176,30 @@ h1 {
 
 .input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px var(--primary-light), 0 4px 16px rgba(99, 102, 241, 0.15);
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--surface);
 }
 
 .input:hover:not(:focus) {
-  border-color: var(--border);
-  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--border-strong);
+  background: var(--surface-2);
 }
 
 .input::placeholder {
-  color: var(--muted);
+  color: var(--text-3);
   font-weight: 400;
 }
 
 .btn {
   width: 100%;
+  height: auto;
   padding: 16px 24px;
   border: none;
-  border-radius: var(--radius-sm);
-  background: var(--primary-gradient);
-  color: #fff;
+  border-radius: var(--btn-radius);
+  background: var(--accent);
+  color: var(--accent-contrast);
   cursor: pointer;
   font-weight: 700;
   font-size: 16px;
@@ -313,42 +207,18 @@ h1 {
   transition: all 0.25s var(--ease-out-expo);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-  transition: left 0.5s var(--ease-out-expo);
-}
-
-.btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.btn:hover::before {
-  left: 100%;
+  box-shadow: var(--accent-glow);
 }
 
 .btn:hover {
-  background: linear-gradient(135deg, var(--primary-hover) 0%, #7c3aed 50%, #a855f7 100%);
+  background: var(--accent-hover);
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn:active {
   transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+  box-shadow: var(--shadow);
   transition-duration: 0.1s;
 }
 
@@ -356,56 +226,10 @@ h1 {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  box-shadow: none;
 }
 
 .btn:focus-visible {
   outline: none;
-  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.4), 0 0 0 3px rgba(99, 102, 241, 0.3);
-}
-
-/* ===== 主题切换按钮 ===== */
-.theme-toggle-login {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 100;
-}
-
-.theme-toggle-login:hover {
-  transform: scale(1.1) rotate(15deg);
-  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.3);
-  background: #6366f1;
-  border-color: #6366f1;
-}
-
-.theme-toggle-login:hover svg {
-  color: white;
-}
-
-.theme-toggle-login svg {
-  color: #6366f1;
-  transition: color 0.3s ease;
-}
-
-/* 暗黑模式 */
-:root.dark .theme-toggle-login {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-:root.dark .theme-toggle-login:hover {
-  background: #6366f1;
-  border-color: #6366f1;
+  box-shadow: var(--focus-ring);
 }

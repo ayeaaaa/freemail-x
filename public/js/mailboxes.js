@@ -128,7 +128,7 @@ function bindCardEvents() {
       const address = card.dataset.address;
       if (address) {
         showToast('跳转中...', 'info', 500);
-        setTimeout(() => location.href = `/?mailbox=${encodeURIComponent(address)}`, 600);
+        setTimeout(() => location.href = `/index.html?mailbox=${encodeURIComponent(address)}`, 600);
       }
     };
   });
@@ -154,7 +154,7 @@ function bindCardEvents() {
           break;
         case 'jump':
           showToast('跳转中...', 'info', 500);
-          setTimeout(() => location.href = `/?mailbox=${encodeURIComponent(address)}`, 600);
+          setTimeout(() => location.href = `/index.html?mailbox=${encodeURIComponent(address)}`, 600);
           break;
         case 'pin':
           try {

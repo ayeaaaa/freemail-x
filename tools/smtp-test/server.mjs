@@ -1,6 +1,8 @@
 import { SMTPServer } from 'smtp-server';
+import { extractVerificationCode } from './extract-code.mjs';
 
 const PORT = Number(process.env.SMTP_PORT || 25);
+const HOST = String(process.env.SMTP_HOST || '0.0.0.0').trim();
 const DB_API_URL = String(process.env.DB_API_URL || '').trim().replace(/\/$/, '');
 const DB_API_TOKEN = String(process.env.DB_API_TOKEN || '').trim();
 
@@ -134,35 +136,72 @@ function parseEntity(headers, body) {
   return { text, html };
 }
 
+function decodeBodyBytes(body, transferEncoding) {
+  if (!body) return Buffer.alloc(0);
+  if (transferEncoding === 'base64') {
+    return Buffer.from(String(body).replace(/\s+/g, ''), 'base64');
+  }
+  if (transferEncoding === 'quoted-printable') {
+    const normalized = String(body).replace(/=\r?\n/g, '');
+    const bytes = Buffer.alloc(normalized.length);
+    let out = 0;
+    for (let i = 0; i < normalized.length; i += 1) {
+      const ch = normalized[i];
+      if (ch === '=' && i + 2 < normalized.length && /^[0-9A-Fa-f]{2}$/.test(normalized.slice(i + 1, i + 3))) {
+        bytes[out] = parseInt(normalized.slice(i + 1, i + 3), 16);
+        out += 1;
+        i += 2;
+      } else {
+        bytes[out] = normalized.charCodeAt(i) & 0xff;
+        out += 1;
+      }
+    }
+    return bytes.subarray(0, out);
+  }
+  return Buffer.from(String(body), 'utf8');
+}
+
 function decodeBodyWithCharset(body, transferEncoding, contentType) {
-  const decodedRaw = decodeBody(body, transferEncoding);
+  if (!body) return '';
+  const bytes = decodeBodyBytes(body, transferEncoding);
   const match = /charset\s*=\s*"?([^";]+)/i.exec(contentType || '');
   const charset = (match && match[1] ? match[1].trim().toLowerCase() : '') || 'utf-8';
-  if (!decodedRaw) return '';
-  if (charset === 'utf-8' || charset === 'utf8' || charset === 'us-ascii') return decodedRaw;
   try {
-    const bytes = new Uint8Array(decodedRaw.split('').map((char) => char.charCodeAt(0)));
     return new TextDecoder(charset, { fatal: false }).decode(bytes);
   } catch {
-    return decodedRaw;
+    return bytes.toString('utf8');
   }
 }
 
-function decodeBody(body, transferEncoding) {
-  if (!body) return '';
-  if (transferEncoding === 'base64') {
+function decodeMimeHeader(value) {
+  const joined = String(value || '').replace(/(\?=)\s+(=\?)/g, '$1$2');
+  return joined.replace(/=\?([^?]+)\?([BQ])\?([^?]*)\?=/gi, (match, charset, encoding, text) => {
     try {
-      return Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf8');
+      let bytes;
+      if (encoding.toUpperCase() === 'B') {
+        bytes = Buffer.from(text, 'base64');
+      } else {
+        const normalized = text.replace(/_/g, ' ');
+        bytes = Buffer.alloc(normalized.length);
+        let out = 0;
+        for (let i = 0; i < normalized.length; i += 1) {
+          const ch = normalized[i];
+          if (ch === '=' && i + 2 < normalized.length && /^[0-9A-Fa-f]{2}$/.test(normalized.slice(i + 1, i + 3))) {
+            bytes[out] = parseInt(normalized.slice(i + 1, i + 3), 16);
+            out += 1;
+            i += 2;
+          } else {
+            bytes[out] = normalized.charCodeAt(i) & 0xff;
+            out += 1;
+          }
+        }
+        bytes = bytes.subarray(0, out);
+      }
+      return new TextDecoder(charset, { fatal: false }).decode(bytes);
     } catch {
-      return body;
+      return match;
     }
-  }
-  if (transferEncoding === 'quoted-printable') {
-    return body
-      .replace(/=\r?\n/g, '')
-      .replace(/=([0-9A-Fa-f]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
-  }
-  return body;
+  });
 }
 
 function escapeHtml(text) {
@@ -173,36 +212,6 @@ function escapeHtml(text) {
     '"': '&quot;',
     "'": '&#39;'
   }[char] || char));
-}
-
-function stripHtml(html) {
-  return String(html || '')
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num, 10)))
-    .replace(/&[a-z]+;/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function extractVerificationCode({ subject = '', text = '', html = '' } = {}) {
-  const body = `${String(text || '')} ${stripHtml(html)}`.trim();
-  const sources = [String(subject || ''), body];
-  const patterns = [
-    /(?:verification|one[-\s]?time|two[-\s]?factor|2fa|security|auth|login|confirm|code|otp|验证码|校验码|驗證碼|確認碼|認證碼)[^\n\r\d]{0,30}([0-9][0-9\s\-_.]{3,15})/i,
-    /([0-9][0-9\s\-_.]{3,15})[^\n\r\d]{0,30}(?:verification|one[-\s]?time|two[-\s]?factor|2fa|security|auth|login|confirm|code|otp|验证码|校验码|驗證碼|確認碼|認證碼)/i
-  ];
-  for (const source of sources) {
-    for (const pattern of patterns) {
-      const match = source.match(pattern);
-      if (!match || !match[1]) continue;
-      const digits = match[1].replace(/\D+/g, '');
-      if (digits.length >= 4 && digits.length <= 8) return digits;
-    }
-  }
-  return '';
 }
 
 async function storeInboundEmail(payload) {
@@ -224,6 +233,7 @@ async function storeInboundEmail(payload) {
 const server = new SMTPServer({
   disabledCommands: ['AUTH', 'STARTTLS'],
   authOptional: true,
+  size: 25 * 1024 * 1024,
   onRcptTo(address, session, callback) {
     if (!address?.address) {
       callback(new Error('Missing recipient'));
@@ -233,9 +243,24 @@ const server = new SMTPServer({
   },
   onData(stream, session, callback) {
     const chunks = [];
-    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+    let sizeExceeded = false;
+    stream.on('data', (chunk) => {
+      if (sizeExceeded) return;
+      if (stream.sizeExceeded) {
+        sizeExceeded = true;
+        chunks.length = 0;
+        return;
+      }
+      chunks.push(Buffer.from(chunk));
+    });
     stream.on('error', callback);
     stream.on('end', async () => {
+      if (sizeExceeded || stream.sizeExceeded) {
+        const error = new Error('Message size exceeds the 25MB limit');
+        error.responseCode = 552;
+        callback(error);
+        return;
+      }
       try {
         const raw = Buffer.concat(chunks).toString('utf8');
         const { rawHeaders } = splitHeadersAndBody(raw);
@@ -245,7 +270,7 @@ const server = new SMTPServer({
         const recipient = session.envelope?.rcptTo?.[0]?.address || headers.get('to') || '';
         const mailbox = normalizeEmailAlias(extractEmail(recipient)).toLowerCase();
         const sender = extractEmail(session.envelope?.mailFrom?.address || headers.get('from') || '').toLowerCase();
-        const subject = headers.get('subject') || '(no subject)';
+        const subject = decodeMimeHeader(headers.get('subject') || '(no subject)');
         const toAddrs = (session.envelope?.rcptTo || []).map((item) => item.address).filter(Boolean).join(',') || recipient;
         const textContent = parsed.text || '';
         const htmlContent = parsed.html || '';
@@ -280,6 +305,10 @@ const server = new SMTPServer({
   }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`SMTP ingress listening on ${PORT}`);
+server.on('error', (error) => {
+  console.error(JSON.stringify({ ok: false, scope: 'smtp-server', error: String(error?.message || error) }));
+});
+
+server.listen({ port: PORT, host: HOST }, () => {
+  console.log(`SMTP ingress listening on ${HOST}:${PORT}`);
 });

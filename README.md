@@ -1,5 +1,11 @@
 # Freemail Mail Chain + VPS Admin
 
+> [!IMPORTANT]
+> **本机的本地 freemail 部署已停用，请勿再使用。**（2026-09-28 停止并取消开机自启）
+>
+> **真正的 freemail 服务：http://mail.example.com:18080/ ，API Token 与部署环境中的 `API_TOKEN` 相同**
+> 需要调用 freemail（生成临时邮箱、收信、取验证码等）时，请直接使用上述远程地址和 token；不要启动或调用本机的 `/opt/freemail-db-api`（:18080）、`/opt/freemail-smtp-ingress`（:25）等已停用组件。详见 `/opt/freemail-db-api/README.md`。
+
 这是一个基于原 `freemail` 改造的版本，目标是将系统拆成两部分：
 
 - Cloudflare Worker 只保留邮件链路

@@ -4,16 +4,43 @@
  */
 
 /**
+ * 解析服务端时间（兼容数据库 +00 格式、ISO、无时区、数字）
+ * @param {string|number|Date} ts - 时间戳
+ * @returns {Date|null}
+ */
+export function parseServerTime(ts) {
+  if (ts === null || ts === undefined || ts === '') return null;
+  if (ts instanceof Date) return Number.isNaN(ts.getTime()) ? null : ts;
+  if (typeof ts === 'number') {
+    const d = new Date(ts);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  let s = String(ts).trim();
+  if (!s) return null;
+  if (/^\d+$/.test(s)) {
+    const d = new Date(Number(s));
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  s = s.replace(' ', 'T');
+  // "+00" / "-05"（小时偏移无冒号）补全为 "+00:00"，仅匹配时间部分之后
+  s = s.replace(/(T\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?)([+-]\d{2})$/, '$1$2:00');
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(s);
+  const hasTime = /T\d{2}:\d{2}/.test(s);
+  if (hasTime && !hasTimezone) s += 'Z';
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/**
  * 格式化时间戳为本地时间
  * @param {string|number} ts - 时间戳
  * @param {object} options - 格式化选项
  * @returns {string}
  */
 export function formatTime(ts, options = {}) {
-  if (!ts) return '';
+  const d = parseServerTime(ts);
+  if (!d) return ts ? String(ts) : '';
   try {
-    const isoStr = String(ts).includes('T') ? ts : ts.replace(' ', 'T');
-    const d = new Date(isoStr + (isoStr.endsWith('Z') ? '' : 'Z'));
     return new Intl.DateTimeFormat('zh-CN', {
       timeZone: 'Asia/Shanghai',
       hour12: false,
@@ -36,26 +63,17 @@ export function formatTime(ts, options = {}) {
  * @returns {string}
  */
 export function formatRelativeTime(ts) {
-  if (!ts) return '';
-  try {
-    const isoStr = String(ts).includes('T') ? ts : ts.replace(' ', 'T');
-    const d = new Date(isoStr + (isoStr.endsWith('Z') ? '' : 'Z'));
-    const now = new Date();
-    const diff = now - d;
-    
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-    
-    if (minutes < 1) return '刚刚';
-    if (minutes < 60) return `${minutes}分钟前`;
-    if (hours < 24) return `${hours}小时前`;
-    if (days < 7) return `${days}天前`;
-    
-    return formatTime(ts, { year: 'numeric', month: 'numeric', day: 'numeric' });
-  } catch (_) {
-    return String(ts);
-  }
+  const d = parseServerTime(ts);
+  if (!d) return ts ? String(ts) : '';
+  const diff = Date.now() - d.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (minutes < 1) return '刚刚';
+  if (minutes < 60) return `${minutes}分钟前`;
+  if (hours < 24) return `${hours}小时前`;
+  if (days < 7) return `${days}天前`;
+  return formatTime(ts, { year: 'numeric', month: 'numeric', day: 'numeric' });
 }
 
 /**
@@ -256,6 +274,7 @@ export function setQueryParam(name, value) {
 
 // 导出默认对象
 export default {
+  parseServerTime,
   formatTime,
   formatRelativeTime,
   escapeHtml,

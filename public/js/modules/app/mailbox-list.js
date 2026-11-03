@@ -28,11 +28,15 @@ export function renderMailboxItem(mailbox, isActive = false) {
   const activeClass = isActive ? 'active' : '';
   const time = formatTs(m.created_at);
   const pinIcon = m.is_pinned ? IconHelper.pin(16, 16) : IconHelper.pin(16, 16);
+  const accessCode = m.access_code
+    ? `<span class="mailbox-access-code" onclick="event.stopPropagation();copyAccessCode('${escapeAttr(m.access_code)}')" title="点击复制访问码">#${escapeHtml(m.access_code)}</span>`
+    : '';
 
   return `
     <div class="mailbox-item ${isPinned} ${activeClass}" onclick="selectMailbox('${address}')">
       <div class="mailbox-content">
         <span class="address">${displayAddress}</span>
+        ${accessCode}
         <span class="time">${time}</span>
       </div>
       <div class="mailbox-actions">

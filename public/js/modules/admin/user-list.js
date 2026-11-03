@@ -4,6 +4,7 @@
  */
 
 import { escapeHtml, escapeAttr } from '../app/ui-helpers.js';
+import { parseServerTime } from '../../core/utils.js';
 
 /**
  * 格式化时间戳
@@ -11,23 +12,15 @@ import { escapeHtml, escapeAttr } from '../app/ui-helpers.js';
  * @returns {string}
  */
 export function formatTime(ts) {
-  if (!ts) return '';
+  const d = parseServerTime(ts);
+  if (!d) return ts ? String(ts) : '';
   try {
-    const iso = ts.includes('T') ? ts : ts.replace(' ', 'T');
-    const d = new Date(iso + 'Z');
     return new Intl.DateTimeFormat('zh-CN', {
-      timeZone: 'Asia/Shanghai',
-      hour12: false,
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+      timeZone: 'Asia/Shanghai', hour12: false,
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
     }).format(d);
-  } catch (_) {
-    return ts;
-  }
+  } catch (_) { return String(ts); }
 }
 
 /**

@@ -40,10 +40,10 @@ async function doLogin(){
 
   try{
     // 目标页：优先使用登录页上的 redirect 参数
-    const target = (function(){
-      try{ const u=new URL(location.href); const t=(u.searchParams.get('redirect')||'').trim(); return t || '/'; }catch(_){ return '/'; }
+    let target = (function(){
+      try{ const u=new URL(location.href); const t=(u.searchParams.get('redirect')||'').trim(); return t || '/index.html'; }catch(_){ return '/index.html'; }
     })();
-    
+    if (target === '/' || target === '/html/app.html') target = '/index.html';
     // 等待登录请求完成，提高成功率
     const response = await fetch('/api/login', {
       method: 'POST',
@@ -65,9 +65,9 @@ async function doLogin(){
         if (result.role === 'mailbox') {
           // 邮箱用户跳转到专用页面
           finalTarget = '/html/mailbox.html';
-        } else if (target === '/' && (result.role === 'admin' || result.role === 'guest')) {
-          // 管理员和访客跳转到主页
-          finalTarget = '/';
+        } else if (target === '/index.html' && (result.role === 'admin' || result.role === 'guest')) {
+          // 管理员和访客跳转到管理端主页
+          finalTarget = '/index.html';
         }
         
         // 显示成功提示

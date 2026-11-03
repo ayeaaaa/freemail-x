@@ -1,0 +1,240 @@
+/* ============================================================
+   Freemail 设计令牌
+   3 风格 × 2 模式：calm/warm/tech × light/dark
+   切换：<html data-style="..." data-mode="...">
+   风格差异：底色 / 形状 / 阴影 / 装饰
+   ============================================================ */
+
+:root,
+[data-style="calm"][data-mode="light"] {
+  color-scheme: light;
+  --bg: #f7f7f8;
+  --surface: #ffffff;
+  --surface-2: #f0f0f1;
+  --text: #18181b;
+  --text-2: #52525b;
+  --text-3: #71717a;
+  --border: #e8e8ea;
+  --border-strong: #d4d4d8;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef2ff;
+  --accent-contrast: #ffffff;
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+  --success: #16a34a;
+  --success-soft: #f0fdf4;
+  --warning: #d97706;
+  --warning-soft: #fffbeb;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --btn-radius: 6px;
+  --accent-glow: none;
+  --focus-ring: 0 0 0 3px var(--accent-soft);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --overlay: rgba(0, 0, 0, 0.4);
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+}
+
+[data-style="calm"][data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #09090b;
+  --surface: #18181b;
+  --surface-2: #1f1f23;
+  --text: #fafafa;
+  --text-2: #d4d4d8;
+  --text-3: #a1a1aa;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-soft: #1e1b4b;
+  --accent-contrast: #ffffff;
+  --danger: #ef4444;
+  --danger-soft: #2c1315;
+  --success: #22c55e;
+  --success-soft: #0f2417;
+  --warning: #f59e0b;
+  --warning-soft: #2b1f0a;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --btn-radius: 6px;
+  --accent-glow: none;
+  --focus-ring: 0 0 0 3px var(--accent-soft);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --overlay: rgba(0, 0, 0, 0.4);
+}
+
+[data-style="warm"][data-mode="light"] {
+  color-scheme: light;
+  --bg: #f7f2ea;
+  --surface: #fffdfa;
+  --surface-2: #f1ebe1;
+  --text: #3d3226;
+  --text-2: #6b5d4f;
+  --text-3: #9a8a78;
+  --border: #ece4d8;
+  --border-strong: #ddd2c2;
+  --accent: #ea580c;
+  --accent-hover: #c2410c;
+  --accent-soft: #ffedd5;
+  --accent-contrast: #ffffff;
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+  --success: #16a34a;
+  --success-soft: #f0fdf4;
+  --warning: #d97706;
+  --warning-soft: #fffbeb;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --btn-radius: 999px;
+  --accent-glow: 0 6px 16px rgba(234, 88, 12, 0.22);
+  --focus-ring: 0 0 0 3px var(--accent-soft);
+  --shadow: 0 6px 20px rgba(180, 140, 90, 0.12);
+  --shadow-lg: 0 16px 40px rgba(180, 140, 90, 0.18);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --overlay: rgba(60, 40, 20, 0.35);
+}
+
+[data-style="warm"][data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #211b15;
+  --surface: #2b241d;
+  --surface-2: #352d24;
+  --text: #faf6f0;
+  --text-2: #d8cdbf;
+  --text-3: #a89a88;
+  --border: #453b30;
+  --border-strong: #5a4d3f;
+  --accent: #fb923c;
+  --accent-hover: #fdba74;
+  --accent-soft: #431407;
+  --accent-contrast: #211b15;
+  --danger: #ef4444;
+  --danger-soft: #2c1315;
+  --success: #22c55e;
+  --success-soft: #0f2417;
+  --warning: #f59e0b;
+  --warning-soft: #2b1f0a;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --btn-radius: 999px;
+  --accent-glow: 0 6px 16px rgba(251, 146, 60, 0.28);
+  --focus-ring: 0 0 0 3px var(--accent-soft);
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --overlay: rgba(0, 0, 0, 0.5);
+}
+
+[data-style="tech"][data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #0a0e14;
+  --surface: #11161f;
+  --surface-2: #161c27;
+  --text: #e6edf3;
+  --text-2: #b3bcc7;
+  --text-3: #8b949e;
+  --border: #21262d;
+  --border-strong: #30363d;
+  --accent: #22d3ee;
+  --accent-hover: #67e8f9;
+  --accent-soft: #083344;
+  --accent-contrast: #0a0e14;
+  --danger: #f87171;
+  --danger-soft: #2c1315;
+  --success: #34d399;
+  --success-soft: #0f2417;
+  --warning: #fbbf24;
+  --warning-soft: #2b1f0a;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --btn-radius: 4px;
+  --accent-glow: 0 0 16px rgba(34, 211, 238, 0.35);
+  --focus-ring: 0 0 0 3px var(--accent-soft), 0 0 12px rgba(34, 211, 238, 0.3);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --overlay: rgba(0, 0, 0, 0.6);
+}
+
+[data-style="tech"][data-mode="light"] {
+  color-scheme: light;
+  --bg: #f2f6f9;
+  --surface: #ffffff;
+  --surface-2: #e8eef3;
+  --text: #16202a;
+  --text-2: #46525e;
+  --text-3: #6b7a88;
+  --border: #d0dae2;
+  --border-strong: #aebcc8;
+  --accent: #0891b2;
+  --accent-hover: #0e7490;
+  --accent-soft: #e0f5fa;
+  --accent-contrast: #ffffff;
+  --danger: #cf222e;
+  --danger-soft: #fef2f2;
+  --success: #1a7f37;
+  --success-soft: #f0fdf4;
+  --warning: #9a6700;
+  --warning-soft: #fffbeb;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --btn-radius: 4px;
+  --accent-glow: 0 0 12px rgba(8, 145, 178, 0.25);
+  --focus-ring: 0 0 0 3px var(--accent-soft), 0 0 10px rgba(8, 145, 178, 0.25);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --overlay: rgba(0, 0, 0, 0.4);
+}
+
+/* 基础应用 */
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Tech 风格：网格背景纹理 */
+[data-style="tech"] body {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+[data-style="tech"][data-mode="light"] body {
+  background-image:
+    linear-gradient(rgba(8, 145, 178, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 145, 178, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+* {
+  scrollbar-color: var(--border-strong) transparent;
+}

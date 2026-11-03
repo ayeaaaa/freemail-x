@@ -7,15 +7,27 @@
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <script>
+    (function () {
+      try {
+        var saved = JSON.parse(localStorage.getItem('mf:ui-theme') || 'null');
+        var styles = ['calm', 'warm', 'tech'];
+        var style = saved && styles.indexOf(saved.style) !== -1 ? saved.style : 'calm';
+        var mode = saved && (saved.mode === 'light' || saved.mode === 'dark')
+          ? saved.mode
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-style', style);
+        document.documentElement.setAttribute('data-mode', mode);
+      } catch (_) {}
+    })();
+  </script>
   <style>.precheck-hide body{ visibility: hidden !important; }</style>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/theme-switcher.css" />
   <link rel="stylesheet" href="/css/app.css" />
   <link rel="stylesheet" href="/css/app-sidebar.css" />
   <link rel="stylesheet" href="/css/app-mailbox.css" />
@@ -23,11 +35,6 @@
   <link rel="stylesheet" href="/css/app-modal.css" />
   <link rel="stylesheet" href="/css/app-responsive.css" />
   <link rel="stylesheet" href="/css/mailbox.css" />
-  <!-- 暗黑模式样式 -->
-  <link rel="stylesheet" href="/css/app_black.css" />
-  <link rel="stylesheet" href="/css/mailbox_black.css" />
-  <!-- 主题切换支持 -->
-  <script src="/js/theme-toggle.js"></script>
   <script src="/js/auth-guard.js" defer></script>
   <script>
     // 访问邮箱页先做前端快速鉴权，仅允许 mailbox 角色
@@ -40,7 +47,7 @@
             return;
           }
           // 其他角色：回首页
-          location.replace('/');
+          location.replace('/index.html');
         })
         .catch(() => {
           // 未登录：进入加载页做鉴权
@@ -68,13 +75,29 @@
     </div>
     <div id="role-badge" class="role-badge" title="邮箱用户">邮箱用户</div>
     <div class="nav-actions">
-      <a id="repo" class="btn btn-ghost" href="https://github.com/idinging/freemail" target="_blank" rel="noopener noreferrer" title="GitHub 开源仓库">
+      <a class="btn btn-ghost" href="/index.html" title="首页">
         <span class="btn-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <use href="/icons/sprites.svg#icon-github"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <use href="/icons/sprites.svg#icon-home"/>
           </svg>
         </span>
-        <span class="btn-text">GitHub</span>
+        <span class="btn-text">首页</span>
+      </a>
+      <a class="btn btn-ghost" data-nav-admin href="/html/mailboxes.html" title="所有邮箱" style="display:none">
+        <span class="btn-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <use href="/icons/sprites.svg#icon-package"/>
+          </svg>
+        </span>
+        <span class="btn-text">所有邮箱</span>
+      </a>
+      <a class="btn btn-ghost" data-nav-admin href="/html/admin.html" title="用户管理" style="display:none">
+        <span class="btn-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <use href="/icons/sprites.svg#icon-wrench"/>
+          </svg>
+        </span>
+        <span class="btn-text">用户管理</span>
       </a>
       <button id="logout" class="btn btn-secondary" title="退出登录">
         <span class="btn-icon">
@@ -236,6 +259,8 @@
     }catch(_){ }
   })();
 </script>
+<script src="/js/nav.js"></script>
+<script src="/js/theme.js"></script>
 </body>
 </html>
 <!-- 确认删除模态框 -->

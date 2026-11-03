@@ -277,7 +277,7 @@ async function loadUserMailboxes() {
     if (container) {
       if (list.length > 0) {
         container.innerHTML = list.map(m => `
-          <div class="mailbox-item" data-address="${m.address}" data-href="/?mailbox=${encodeURIComponent(m.address)}">
+          <div class="mailbox-item" data-address="${m.address}" data-href="/index.html?mailbox=${encodeURIComponent(m.address)}">
             <span class="address">${m.address}</span>
             <button class="btn danger" data-action="unassign">取消分配</button>
           </div>

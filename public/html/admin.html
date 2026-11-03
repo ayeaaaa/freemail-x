@@ -7,6 +7,20 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <script>
+      (function () {
+        try {
+          var saved = JSON.parse(localStorage.getItem('mf:ui-theme') || 'null');
+          var styles = ['calm', 'warm', 'tech'];
+          var style = saved && styles.indexOf(saved.style) !== -1 ? saved.style : 'calm';
+          var mode = saved && (saved.mode === 'light' || saved.mode === 'dark')
+            ? saved.mode
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-style', style);
+          document.documentElement.setAttribute('data-mode', mode);
+        } catch (_) {}
+      })();
+    </script>
     <noscript>
       <meta http-equiv="refresh" content="0; url=/templates/loading.html?redirect=%2Fhtml%2Fadmin.html" />
     </noscript>
@@ -14,11 +28,9 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/theme-switcher.css" />
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/css/app-sidebar.css" />
     <link rel="stylesheet" href="/css/app-mailbox.css" />
@@ -26,11 +38,6 @@
     <link rel="stylesheet" href="/css/app-modal.css" />
     <link rel="stylesheet" href="/css/app-responsive.css" />
     <link rel="stylesheet" href="/css/admin.css" />
-    <!-- 暗黑模式样式 -->
-    <link rel="stylesheet" href="/css/app_black.css" />
-    <link rel="stylesheet" href="/css/admin_black.css" />
-    <!-- 主题切换支持 -->
-    <script src="/js/theme-toggle.js"></script>
     <script src="/js/auth-guard.js" defer></script>
     <script>
       // 访问管理页先做前端快速鉴权，避免内容闪现；未登录或权限不足均进入 loading 或回首页
@@ -43,7 +50,7 @@
               return;
             }
             // 已登录但无权限：回首页
-            location.replace('/');
+            location.replace('/index.html');
           })
           .catch(() => {
             // 未登录：进入加载页做鉴权
@@ -66,24 +73,40 @@
             <use href="/icons/sprites.svg#icon-rocket"/>
           </svg>
         </span>
-        <span>iDing's临时邮箱 - 用户管理</span>
+        <span class="brand-text">iDing's临时邮箱 - 用户管理</span>
       </div>
       <div class="nav-actions">
-        <button id="back" class="btn btn-ghost" title="返回邮箱" aria-label="返回邮箱页面">
-          <span>
+        <a class="btn btn-ghost" href="/index.html" title="首页">
+          <span class="btn-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <use href="/icons/sprites.svg#icon-mail"/>
+              <use href="/icons/sprites.svg#icon-home"/>
             </svg>
           </span>
-          <span>返回邮箱</span>
-        </button>
-        <button id="logout" class="btn btn-secondary" title="退出登录" aria-label="退出登录">
-          <span>
+          <span class="btn-text">首页</span>
+        </a>
+        <a class="btn btn-ghost" data-nav-admin href="/html/mailboxes.html" title="所有邮箱" style="display:none">
+          <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="/icons/sprites.svg#icon-package"/>
+            </svg>
+          </span>
+          <span class="btn-text">所有邮箱</span>
+        </a>
+        <a class="btn btn-ghost" data-nav-admin href="/html/admin.html" title="用户管理" style="display:none">
+          <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="/icons/sprites.svg#icon-wrench"/>
+            </svg>
+          </span>
+          <span class="btn-text">用户管理</span>
+        </a>
+        <button id="logout" class="btn btn-secondary" title="退出登录">
+          <span class="btn-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <use href="/icons/sprites.svg#icon-logout"/>
             </svg>
           </span>
-          <span>退出登录</span>
+          <span class="btn-text">退出登录</span>
         </button>
       </div>
     </div>
@@ -177,12 +200,6 @@
                 </svg>
                 <span>取消分配</span>
               </button>
-              <a href="/html/domain-migrate.html" class="action-btn action-btn-outline" aria-label="迁移域名到VPS直收">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <use href="/icons/sprites.svg#icon-globe"/>
-                </svg>
-                <span>迁移域名</span>
-              </a>
             </div>
           </div>
 
@@ -632,6 +649,7 @@
         }catch(_){ }
       })();
     </script>
+    <script src="/js/nav.js"></script>
+    <script src="/js/theme.js"></script>
   </body>
-  </html>
-
+</html>

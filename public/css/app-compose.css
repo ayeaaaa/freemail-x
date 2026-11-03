@@ -22,53 +22,25 @@
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
-}
-
-.btn::before{
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s var(--ease-out-expo);
-}
-
-.btn::after{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
-  border-radius: inherit;
-  opacity: 1;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+  box-shadow: var(--shadow);
 }
 
 .btn:hover{
   background: var(--card-glass-hover);
-  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-lg);
   border-color: var(--border-focus);
   transform: translateY(-2px);
 }
 
-.btn:hover::before{
-  left: 100%;
-}
-
 .btn:active{
   transform: translateY(0) scale(0.98);
-  box-shadow: var(--shadow-xs), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow);
   transition-duration: 0.1s;
 }
 
 .btn:focus-visible{
   outline: none;
-  box-shadow: var(--shadow-md), 0 0 0 3px var(--primary-light);
+  box-shadow: var(--focus-ring);
 }
 
 /* 主要按钮 - 鲜艳渐变 */
@@ -79,20 +51,16 @@
   box-shadow: var(--shadow-button);
 }
 
-.btn-primary::after{
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
-}
-
 .btn-primary:hover{
-  background: linear-gradient(135deg, var(--primary-hover) 0%, #7c3aed 50%, #a855f7 100%);
+  background: var(--accent-hover);
   box-shadow: var(--shadow-button-hover);
   transform: translateY(-3px);
   border: none;
 }
 
 .btn-primary:active{
-  background: linear-gradient(135deg, var(--primary-active) 0%, #6d28d9 100%);
-  box-shadow: var(--shadow), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: var(--accent-hover);
+  box-shadow: var(--shadow);
 }
 
 /* 次要按钮 - 透明玻璃 */
@@ -100,16 +68,14 @@
   background: var(--card-glass);
   color: var(--text);
   border: 1px solid var(--border-glass);
-  backdrop-filter: var(--blur-lg);
-  -webkit-backdrop-filter: var(--blur-lg);
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow);
 }
 
 .btn-secondary:hover{
   background: var(--card-glass-hover);
   border-color: var(--primary);
   color: var(--primary);
-  box-shadow: var(--shadow-md), 0 0 0 1px var(--primary-light);
+  box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
 }
 
@@ -122,22 +88,18 @@
   background: var(--danger-gradient);
   color: var(--text-inverse);
   border: none;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-.btn-danger::after{
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+  box-shadow: var(--shadow);
 }
 
 .btn-danger:hover{
-  background: linear-gradient(135deg, var(--danger-hover) 0%, #f87171 100%);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: var(--danger);
+  box-shadow: var(--shadow-lg);
   transform: translateY(-3px);
   border: none;
 }
 
 .btn-danger:active{
-  background: linear-gradient(135deg, var(--danger-active) 0%, #dc2626 100%);
+  background: var(--danger);
 }
 
 .btn-sm{
@@ -178,8 +140,6 @@
   border-radius: var(--radius-md);
   padding: 14px 16px;
   background: var(--card-glass);
-  backdrop-filter: var(--blur-lg);
-  -webkit-backdrop-filter: var(--blur-lg);
   box-shadow: var(--shadow-xs);
   transition: all 0.25s var(--ease-out-expo);
   position: relative;
@@ -203,17 +163,7 @@
   background: var(--primary-gradient);
   opacity: 0;
   transition: all 0.25s var(--ease-out-expo);
-  border-radius: 0 2px 2px 0;
-}
-
-.email-item::after{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--card-gradient-accent);
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  pointer-events: none;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .email-item:hover::before{
@@ -221,14 +171,10 @@
   width: 5px;
 }
 
-.email-item:hover::after{
-  opacity: 1;
-}
-
 .email-item:hover{
   transform: translateX(4px);
-  box-shadow: var(--shadow-md), 0 0 0 1px var(--primary-light);
-  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
   background: var(--card-glass-hover);
   z-index: 2;
 }
@@ -269,7 +215,7 @@
   color: var(--text-light); 
   background: var(--card-glass); 
   border: 1px solid var(--border-glass); 
-  border-radius: 999px; 
+  border-radius: var(--radius-full); 
   padding: 2px 8px;
   white-space: nowrap;
   flex-shrink: 0;
@@ -388,7 +334,7 @@
   color: var(--text-light); 
   background: var(--card-glass); 
   border: 1px solid var(--border-glass); 
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   white-space: nowrap;
   flex-shrink: 0;
 }

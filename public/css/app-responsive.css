@@ -58,10 +58,10 @@
     width: 100%;
     padding: 8px 12px;
     font-size: 12px;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: var(--primary-light);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    color: var(--primary);
+    border: 1px solid var(--accent);
+    color: var(--accent);
   }
   .sidebar .sidebar-header{ cursor: pointer; }
   
@@ -215,7 +215,7 @@
 
 /* mailboxes 页面搜索条样式 */
 .page-mailboxes .toolbar{ display:flex; justify-content:center; margin-bottom:12px; }
-.searchbar{ display:flex; align-items:center; gap:8px; background: var(--card-glass); border:1px solid var(--border-glass); padding:8px 10px; border-radius: 999px; box-shadow: var(--shadow-glass); width: min(720px, 100%); }
+.searchbar{ display:flex; align-items:center; gap:8px; background: var(--card-glass); border:1px solid var(--border-glass); padding:8px 10px; border-radius: var(--radius-full); box-shadow: var(--shadow-glass); width: min(720px, 100%); }
 .search-input{ flex:1; border:none; background: transparent; outline: none; padding: 6px 8px; font-size:14px; color: var(--text); }
 .search-input::placeholder{ color: var(--muted2); }
 .page-mailboxes .btn-sm{ height:36px; }
@@ -258,7 +258,7 @@
 
 /* 主要按钮（btn-primary）图标颜色 */
 .btn-primary .btn-icon svg {
-  color: #fff;
+  color: var(--accent-contrast);
 }
 
 /* 生成按钮图标颜色 */
@@ -273,7 +273,7 @@
 
 /* 危险按钮图标颜色 */
 .btn-danger .btn-icon svg {
-  color: #fff;
+  color: var(--accent-contrast);
 }
 
 /* Ghost 按钮图标颜色 */

@@ -37,21 +37,22 @@ try{
   function getRedirectTarget(){
     try{ 
       const u = new URL(location.href); 
-      let redirectParam = u.searchParams.get('redirect') || '/';
+      let redirectParam = u.searchParams.get('redirect') || '/index.html';
+      if (redirectParam === '/' || redirectParam === '/html/app.html') redirectParam = '/index.html';
       // 优先从 sessionStorage 读取在来源页保存的 hash
       let preservedHash = '';
       try{ preservedHash = sessionStorage.getItem('mf:preservedHash') || ''; }catch(_){ }
       // 当前页若也带有 hash 作为兜底
       const currentHash = location.hash || '';
       const hashToUse = preservedHash || currentHash;
-      if ((redirectParam === '/' || redirectParam === '/html/app.html') && hashToUse) {
+      if (redirectParam === '/index.html' && hashToUse) {
         return redirectParam + hashToUse;
       }
       return redirectParam;
     }catch(_){ 
       // 发生错误时，优先使用已保存的 hash
-      try{ const ph = sessionStorage.getItem('mf:preservedHash'); if (ph) return '/' + ph; }catch(_){ }
-      return location.hash ? '/' + location.hash : '/'; 
+      try{ const ph = sessionStorage.getItem('mf:preservedHash'); if (ph) return '/index.html' + ph; }catch(_){ }
+      return location.hash ? '/index.html' + location.hash : '/index.html';
     }
   }
   function hasRedirectParam(){
@@ -121,7 +122,7 @@ try{
                 clearTimeout(tid);
                 if (r && r.ok) {
                   // cookie有效，跳转
-                  var target = '/';
+                  var target = '/index.html';
                   try{
                     var ph = sessionStorage.getItem('mf:preservedHash') || '';
                     if (!ph && location.hash) ph = location.hash;
@@ -139,7 +140,7 @@ try{
             return true;
           } else {
             // 直接访问登录页且有cookie，立即跳转
-            var target = '/';
+            var target = '/index.html';
             try{
               var ph = sessionStorage.getItem('mf:preservedHash') || '';
               if (!ph && location.hash) ph = location.hash;
@@ -221,9 +222,9 @@ try{
         // 非直达则尽快返回目标或首页
         try{
           const u = new URL(location.href);
-          const target = u.searchParams.get('redirect') || '/';
+          const target = u.searchParams.get('redirect') || '/index.html';
           window.location.replace(target);
-        }catch(_){ window.location.replace('/'); }
+        }catch(_){ window.location.replace('/index.html'); }
       }
     });
   }

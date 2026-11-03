@@ -17,7 +17,7 @@
 
 .form-group .form-hint {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-3);
   margin-top: var(--spacing-xs);
 }
 
@@ -31,7 +31,7 @@
   font-size: 14px;
   line-height: 1.5;
   color: var(--text);
-  background: var(--card);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   transition: var(--transition-fast);
@@ -41,21 +41,21 @@
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light);
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
 }
 
 .form-input:disabled,
 .form-select:disabled,
 .form-textarea:disabled {
-  background: var(--border-light);
-  color: var(--text-disabled);
+  background: var(--surface-2);
+  color: var(--text-3);
   cursor: not-allowed;
 }
 
 .form-input::placeholder,
 .form-textarea::placeholder {
-  color: var(--text-muted);
+  color: var(--text-3);
 }
 
 /* 输入框尺寸 */
@@ -80,9 +80,12 @@
 /* 选择框 */
 .form-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-3) 50%),
+    linear-gradient(135deg, var(--text-3) 50%, transparent 50%);
   background-repeat: no-repeat;
-  background-position: right 12px center;
+  background-position: right 16px center, right 11px center;
+  background-size: 5px 5px, 5px 5px;
   padding-right: 36px;
   cursor: pointer;
 }
@@ -101,7 +104,7 @@
   height: 18px;
   margin: 0;
   cursor: pointer;
-  accent-color: var(--primary);
+  accent-color: var(--accent);
 }
 
 .form-check-label {
@@ -123,13 +126,13 @@
   width: 44px;
   height: 24px;
   background: var(--border);
-  border-radius: var(--radius-full);
+  border-radius: var(--btn-radius);
   cursor: pointer;
   transition: var(--transition-fast);
 }
 
 .form-switch-input:checked {
-  background: var(--primary);
+  background: var(--accent);
 }
 
 .form-switch-input::before {
@@ -139,10 +142,10 @@
   left: 2px;
   width: 20px;
   height: 20px;
-  background: white;
+  background: var(--accent-contrast);
   border-radius: 50%;
   transition: var(--transition-fast);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow);
 }
 
 .form-switch-input:checked::before {
@@ -168,10 +171,10 @@
   display: flex;
   align-items: center;
   padding: 0 14px;
-  background: var(--border-light);
+  background: var(--surface-2);
   border: 1px solid var(--border);
   font-size: 14px;
-  color: var(--text-muted);
+  color: var(--text-3);
 }
 
 .input-group-prepend {
@@ -199,7 +202,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-muted);
+  color: var(--text-3);
   pointer-events: none;
 }
 
@@ -210,7 +213,7 @@
   transform: translateY(-50%);
   padding: 4px 8px;
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-3);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -232,7 +235,7 @@
 .form-input.error:focus,
 .form-select.error:focus,
 .form-textarea.error:focus {
-  box-shadow: 0 0 0 3px var(--danger-light);
+  box-shadow: 0 0 0 3px var(--danger-soft);
 }
 
 .form-error {
@@ -249,7 +252,7 @@
 
 .form-input.success:focus,
 .form-select.success:focus {
-  box-shadow: 0 0 0 3px var(--success-light);
+  box-shadow: 0 0 0 3px var(--success-soft);
 }
 
 /* 范围滑块 */
@@ -257,7 +260,7 @@
   width: 100%;
   height: 6px;
   background: var(--border);
-  border-radius: var(--radius-full);
+  border-radius: var(--btn-radius);
   appearance: none;
   cursor: pointer;
 }
@@ -266,14 +269,14 @@
   appearance: none;
   width: 18px;
   height: 18px;
-  background: var(--primary);
+  background: var(--accent);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow);
   transition: var(--transition-fast);
 }
 
 .form-range::-webkit-slider-thumb:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 0 4px var(--primary-light);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }

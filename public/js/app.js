@@ -8,7 +8,7 @@ import { openForwardDialog, toggleFavorite, injectDialogStyles } from './mailbox
 import IconHelper from './modules/icons.js';
 
 // 导入模块
-import { formatTs, formatTsMobile, extractCode, escapeHtml, escapeAttr } from './modules/app/ui-helpers.js';
+import { formatTs, formatTsMobile, extractCode, escapeHtml, escapeAttr, copyText } from './modules/app/ui-helpers.js';
 import { mockApi, MOCK_STATE } from './modules/app/mock-api.js';
 import { showConfirm } from './modules/app/confirm-dialog.js';
 import { startAutoRefresh, stopAutoRefresh, initVisibilityTracking } from './modules/app/auto-refresh.js';
@@ -76,6 +76,9 @@ els.subdomainLevelSelect = document.getElementById('subdomain-level-select');
 els.domainAddInput = document.getElementById('domain-add-input');
 els.domainAddBtn = document.getElementById('domain-add-btn');
 els.domainDeleteBtn = document.getElementById('domain-delete-btn');
+els.accessCodeRow = document.getElementById('access-code-row');
+els.accessCodeText = document.getElementById('access-code-text');
+els.copyAccessCode = document.getElementById('copy-access-code');
 
 // 初始化
 initSessionFromCache();
@@ -162,11 +165,20 @@ window.deleteEmail = (id) => deleteEmailById(id, api, showToast, showConfirm, re
 window.deleteSent = (id) => deleteSentById(id, api, showToast, showConfirm, refresh);
 window.copyFromList = (e, id) => copyFromEmailList(e, id, api, showToast);
 window.refreshEmails = refresh;
+window.copyAccessCode = async (code) => {
+  const value = String(code || '').trim();
+  if (!value) return;
+  const ok = await copyText(value);
+  showToast(ok ? '访问码已复制' : '复制失败，请手动复制', ok ? 'success' : 'warn');
+};
 
 // 事件绑定
 if (els.gen) els.gen.onclick = () => generateMailbox(els, lenRange, domainSelect, api, showToast, refresh, loadMailboxes, autoRefreshCallback, updateMailboxInfoUI);
 if (els.genName) els.genName.onclick = () => generateNameMailbox(els, lenRange, domainSelect, api, showToast, refresh, loadMailboxes, autoRefreshCallback, updateMailboxInfoUI);
 if (els.copy) els.copy.onclick = () => copyMailboxAddress(showToast);
+if (els.copyAccessCode) els.copyAccessCode.onclick = () => {
+  window.copyAccessCode(els.accessCodeText?.textContent || '');
+};
 if (els.clear) els.clear.onclick = () => clearAllEmails(api, showToast, showConfirm, refresh);
 if (els.refresh) els.refresh.onclick = refresh;
 if (els.logout) els.logout.addEventListener('click', async () => {
@@ -191,16 +203,50 @@ if (els.mbSearch) { let t = null; els.mbSearch.oninput = () => { if (t) clearTim
 if (els.mbRefresh) els.mbRefresh.onclick = () => loadMailboxes({ forceFresh: true });
 
 if (els.domainAddBtn) els.domainAddBtn.onclick = async () => {
-  const value = String(els.domainAddInput?.value || '').trim().toLowerCase();
-  if (!value) return showToast('请输入域名', 'warn');
-  try {
-    await api('/api/domains', { method: 'POST', body: JSON.stringify({ domain: value }) });
+  const domainsToAdd = Array.from(new Set(
+    String(els.domainAddInput?.value || '')
+      .split(',')
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean)
+  ));
+  if (!domainsToAdd.length) return showToast('请输入域名', 'warn');
+
+  let createdCount = 0;
+  let skippedCount = 0;
+  let failedCount = 0;
+  for (const domain of domainsToAdd) {
+    try {
+      const res = await api('/api/domains', { method: 'POST', body: JSON.stringify({ domain }) });
+      if (!res.ok) throw new Error('request failed');
+      const data = await res.json();
+      if (data.created) createdCount += 1;
+      else skippedCount += 1;
+    } catch (_) {
+      failedCount += 1;
+    }
+  }
+
+  if (createdCount > 0) {
     els.domainAddInput.value = '';
     await loadDomains(domainSelect, api);
-    showToast('域名已添加', 'success');
-  } catch (e) {
-    showToast(e.message || '添加失败', 'error');
+  } else if (skippedCount > 0 && failedCount === 0) {
+    els.domainAddInput.value = '';
   }
+
+  if (createdCount === 0 && skippedCount > 0 && failedCount === 0) {
+    showToast(`已存在跳过 ${skippedCount} 个（域名均已存在）`, 'warn');
+    return;
+  }
+  if (createdCount === 0 && skippedCount === 0 && failedCount > 0) {
+    showToast(`添加失败 ${failedCount} 个`, 'error');
+    return;
+  }
+
+  const parts = [];
+  if (createdCount > 0) parts.push(`新增 ${createdCount} 个`);
+  if (skippedCount > 0) parts.push(`已存在跳过 ${skippedCount} 个`);
+  if (failedCount > 0) parts.push(`失败 ${failedCount} 个`);
+  showToast(parts.join('，'), failedCount > 0 ? 'warn' : 'success');
 };
 
 if (els.domainDeleteBtn) els.domainDeleteBtn.onclick = async () => {

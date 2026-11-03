@@ -7,8 +7,6 @@
   position: sticky;
   top: 120px;
   background: var(--card);
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-glass);
   box-shadow: var(--shadow-glass);
@@ -20,7 +18,7 @@
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, .4) transparent;
+  scrollbar-color: var(--border-strong) transparent;
   scrollbar-gutter: stable both-edges;
 }
 
@@ -31,7 +29,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--secondary), var(--accent));
+  background: var(--accent);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
@@ -42,24 +40,24 @@
   height: 36px;
   padding: 8px 12px;
   border: 1px solid var(--border-glass);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--card-glass);
   box-shadow: var(--shadow-glass);
 }
 .sidebar-search-input::placeholder{ color: var(--muted2); }
-.sidebar-search-input:focus{ outline:none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,.15); background: #fff; }
+.sidebar-search-input:focus{ outline:none; border-color: var(--accent); box-shadow: var(--focus-ring); background: var(--surface); }
 
 /* 更细、更透明的滚动条（Chromium/WebKit） */
 .sidebar::-webkit-scrollbar{ width: 8px; height: 8px; }
 .sidebar::-webkit-scrollbar-button{ display: none; width: 0; height: 0; }
 .sidebar::-webkit-scrollbar-track{ background: transparent; }
 .sidebar::-webkit-scrollbar-thumb{
-  background: rgba(100,116,139,.35);
-  border-radius: 999px;
-  border: 2px solid rgba(255,255,255,.5);
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--surface);
 }
-.sidebar:hover::-webkit-scrollbar-thumb{ background: linear-gradient(180deg, rgba(59,130,246,.6), rgba(139,92,246,.6)); }
-.sidebar::-webkit-scrollbar-thumb:hover{ background: linear-gradient(180deg, rgba(59,130,246,.8), rgba(139,92,246,.8)); }
+.sidebar:hover::-webkit-scrollbar-thumb{ background: var(--border-strong); }
+.sidebar::-webkit-scrollbar-thumb:hover{ background: var(--text-3); }
 
 .sidebar:hover{
   box-shadow: var(--shadow-lg);
@@ -107,33 +105,14 @@
   color: var(--primary);
   font-weight: 600;
   border: 1px solid var(--primary);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 4px 8px;
-  background: rgba(var(--primary-rgb), 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--accent-soft);
   min-width: 50px;
   text-align: center;
   transition: var(--transition);
   position: relative;
   overflow: hidden;
-}
-
-.quota-display.admin-quota::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
-  opacity: 0;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
 }
 
 /* 新增：精美的加载状态动画 */
@@ -142,29 +121,13 @@
   overflow: hidden;
 }
 
-.loading-enhanced::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
 /* 增强的焦点状态 */
 .input:focus,
 .textarea:focus,
 .select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light), 0 4px 14px rgba(59, 130, 246, 0.15);
+  box-shadow: var(--focus-ring);
   transform: scale(1.01);
 }
 
@@ -175,7 +138,7 @@
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(59, 130, 246, 0.05);
+  box-shadow: var(--shadow-lg);
 }
 
 /* 按钮图标动画 */
@@ -208,7 +171,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+  background: var(--accent-soft);
   transition: var(--transition);
 }
 
@@ -228,30 +191,6 @@
   overflow: hidden;
 }
 
-.status-badge::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  opacity: 0;
-  transition: var(--transition);
-  transform: scale(0);
-}
-
-.status-badge:hover::before {
-  opacity: 1;
-  transform: scale(1);
-  animation: ripple 0.6s ease-out;
-}
-
-@keyframes ripple {
-  from { transform: scale(0); opacity: 1; }
-  to { transform: scale(1); opacity: 0; }
-}
-
 .sidebar-icon {
   font-size: 20px;
   animation: iconFloat 3s ease-in-out infinite;
@@ -265,9 +204,9 @@
 
 /* 侧板收起/展开按钮样式 */
 .sidebar-toggle-btn {
-  background: linear-gradient(135deg, var(--card) 0%, rgba(255,255,255,0.9) 100%);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   width: 36px;
   height: 36px;
   display: flex;
@@ -275,34 +214,17 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
 }
 
-.sidebar-toggle-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  transition: left 0.6s ease;
-}
-
 .sidebar-toggle-btn:hover {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  border-color: var(--primary);
-  color: white;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
   transform: scale(1.1) translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-}
-
-.sidebar-toggle-btn:hover::before {
-  left: 100%;
+  box-shadow: var(--shadow-lg);
 }
 
 .sidebar-toggle-btn:active {
@@ -317,7 +239,7 @@
 }
 
 .sidebar-toggle-btn:hover span {
-  color: white;
+  color: var(--accent-contrast);
 }
 
 /* 侧板收起状态 */
@@ -329,15 +251,12 @@
               padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
               background 0.3s ease,
               box-shadow 0.3s ease;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, var(--card-glass) 50%, rgba(139, 92, 246, 0.05) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: sidebarPulse 4s ease-in-out infinite;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .sidebar.collapsed:hover {
-  animation: sidebarPulse 2s ease-in-out infinite;
   transform: translateY(-1px);
 }
 
@@ -369,12 +288,10 @@
   margin: 0;
   transform: none;
   font-size: 16px;
-  animation: iconGlow 3s ease-in-out infinite;
   transition: all 0.3s ease;
 }
 
 .sidebar.collapsed:hover .sidebar-icon {
-  animation: iconGlow 1s ease-in-out infinite;
   transform: scale(1.1);
 }
 
@@ -397,16 +314,16 @@
 .sidebar.collapsed .sidebar-toggle-btn {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
-  box-shadow: 0 3px 15px rgba(59, 130, 246, 0.2);
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(255,255,255,0.9) 100%);
-  border-color: rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  background: var(--surface-2);
+  border-color: var(--border);
 }
 
 .sidebar.collapsed .sidebar-toggle-btn:hover {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  background: var(--accent);
   transform: scale(1.15) translateY(-3px);
-  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+  box-shadow: var(--shadow-lg);
 }
 
 .sidebar.collapsed .sidebar-toggle-btn span {
@@ -431,19 +348,19 @@
   min-height: 32px;
   padding: 6px 4px;
   font-size: 10px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(255,255,255,0.8) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  color: var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  color: var(--accent);
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .sidebar.collapsed #mb-more:hover {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  color: white;
+  background: var(--accent);
+  color: var(--accent-contrast);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .sidebar.collapsed #mb-more-text {
@@ -481,10 +398,10 @@
   min-height: 30px;
   padding: 5px 4px;
   font-size: 10px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(255,255,255,0.8) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  color: var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  color: var(--accent);
 }
 
 /* 容器布局调整 */
@@ -524,26 +441,24 @@
 /* 侧板收起时的邮箱显示区域优化 */
 .container.sidebar-collapsed .mailbox-display-content {
   padding: 28px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,253,250,0.9) 100%);
+  background: var(--surface);
   border-radius: var(--radius);
-  border: 1px solid rgba(16, 185, 129, 0.08);
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .container.sidebar-collapsed .email-display {
   min-height: 80px;
   padding: 20px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.6) 100%);
-  border: 2px solid rgba(16, 185, 129, 0.15);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--surface-2);
+  border: 2px solid var(--success);
+  border-radius: var(--radius-md);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .container.sidebar-collapsed .email-display:hover {
-  border-color: rgba(16, 185, 129, 0.3);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+  border-color: var(--success);
+  box-shadow: var(--shadow-lg);
 }
 
 .container.sidebar-collapsed .mailbox-actions {
@@ -564,10 +479,10 @@
 /* 侧板收起时的配置项优化 */
 .container.sidebar-collapsed .config-form {
   padding: 24px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+  background: var(--surface);
   border-radius: var(--radius);
-  border: 1px solid rgba(59, 130, 246, 0.08);
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .container.sidebar-collapsed .generate-action {
@@ -579,34 +494,34 @@
   padding: 14px 28px;
   font-size: 15px;
   font-weight: 600;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
   transform: translateY(0);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .container.sidebar-collapsed .btn-generate:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-lg);
 }
 
 /* 侧板收起时的卡片样式优化 */
 .container.sidebar-collapsed .generate-card {
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(59, 130, 246, 0.1);
-  background: linear-gradient(135deg, var(--card) 0%, rgba(248, 250, 252, 0.95) 100%);
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .container.sidebar-collapsed .inbox-card {
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(16, 185, 129, 0.1);
-  background: linear-gradient(135deg, var(--card) 0%, rgba(240, 253, 250, 0.95) 100%);
+  border: 1px solid var(--border);
+  background: var(--surface);
   transform: translateY(0);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .container.sidebar-collapsed .inbox-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+  box-shadow: var(--shadow-lg);
 }
 
 /* 侧板收起时的整体容器动画 */
@@ -629,26 +544,6 @@
     filter: blur(0);
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-@keyframes sidebarPulse {
-  0%, 100% {
-    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  }
-  50% {
-    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  }
-}
-
-@keyframes iconGlow {
-  0%, 100% {
-    text-shadow: none;
-  }
-  50% {
-    text-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
   }
 }
 
@@ -678,11 +573,10 @@
   .sidebar.collapsed {
     width: 50px;
     padding: 12px 4px;
-    animation: sidebarPulse 5s ease-in-out infinite;
   }
   
   .sidebar.collapsed:hover {
-    animation: sidebarPulse 2.5s ease-in-out infinite;
+    transform: translateY(-1px);
   }
   
   .sidebar.collapsed h3 {
@@ -698,14 +592,14 @@
   .sidebar.collapsed .sidebar-toggle-btn {
     width: 28px;
     height: 28px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(255,255,255,0.9) 100%);
-    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-lg);
+    background: var(--surface-2);
+    box-shadow: var(--shadow);
   }
   
   .sidebar.collapsed .sidebar-toggle-btn:hover {
     transform: scale(1.2) translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    box-shadow: var(--shadow-lg);
   }
   
   .sidebar.collapsed .sidebar-toggle-btn span {
@@ -723,7 +617,7 @@
     min-height: 28px;
     padding: 4px 2px;
     font-size: 9px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
   }
   
   .sidebar.collapsed #mb-more-text {
@@ -794,11 +688,11 @@
 }
 
 .generate-card{
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+  background: var(--accent-soft);
 }
 
 .inbox-card{
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.05));
+  background: var(--success-soft);
 }
 .listcard-header{
   display: grid;
@@ -811,7 +705,7 @@
   margin: 0; display:flex; align-items:center; gap:8px; justify-self: start;
 }
 .view-switch{ 
-  justify-self: center; display: inline-flex; background: var(--card-glass); border:1px solid var(--border-glass); border-radius: 999px; overflow:hidden; box-shadow: var(--shadow-glass);
+  justify-self: center; display: inline-flex; background: var(--card-glass); border:1px solid var(--border-glass); border-radius: var(--radius-full); overflow:hidden; box-shadow: var(--shadow-glass);
 }
 .seg-btn{
   background: transparent; border:none; padding: 8px 16px; font-weight:600; color: var(--text-light); cursor:pointer; transition: var(--transition);
@@ -820,12 +714,12 @@
   background: var(--primary-light);
   color: var(--primary);
 }
-.seg-btn:hover{ background: rgba(59,130,246,0.08); color: var(--primary); }
+.seg-btn:hover{ background: var(--accent-soft); color: var(--accent); }
 
 .loading-indicator{ display:none; align-items:center; gap:8px; justify-self:end; color: var(--text-light); }
 .loading-indicator.show{ display:inline-flex; }
 .spinner{
-  width:16px; height:16px; border:2px solid rgba(59,130,246,0.2); border-top-color: var(--primary); border-radius:50%; animation: spin 0.8s linear infinite;
+  width:16px; height:16px; border:2px solid var(--accent-soft); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg);} }
 
